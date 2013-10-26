@@ -101,15 +101,14 @@ public class DrawActivity extends RoboActivity {
             mSensorDataManager.stopRecording();
             drawCurrentPath();
             mDrawingImage.invalidate();
+            mPath.clear();
         }
         
         private void drawCurrentPath() {
             final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
-            mBitmapController.draw(currentPath); // XXX do that on the
-                                                 // background
-            mBitmapController.render(mDrawingImage);
+            mBitmapController.render(currentPath, mDrawingImage);
         }
-        
+
         @Override
         public void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema, int index) {
             if (index == 1) {
