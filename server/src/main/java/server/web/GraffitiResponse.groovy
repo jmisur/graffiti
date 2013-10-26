@@ -6,7 +6,7 @@ class GraffitiResponse {
 
 	String user
 	String description
-	String data
+	String[] data
 	String latitude
 	String longitude
 

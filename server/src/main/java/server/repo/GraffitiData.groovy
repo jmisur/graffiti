@@ -10,6 +10,6 @@ class GraffitiData {
 
 	String user
 	String description
-	String data
+	String[] data
 	double[] loc
 }

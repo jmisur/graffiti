@@ -83,8 +83,13 @@
                 }
 
                 function add_item(item, list, no){
+					var lines = '';
+					for (var i = 0; i < item.data.length; i++) {
+						 lines += '<polyline points="'+item.data[i]+'" style="fill:none;stroke:black;stroke-width:3" transform="scale(0.3)"/>';
+					}
                     var listitem = $('<li class="list-group-item">' +
-                            '<h3>'+item.description+'</h3>' +item.user+'<svg><polyline points="'+item.data+'" style="fill:none;stroke:black;stroke-width:3" /></svg></li>')
+                    		'<h3>'+item.description+'</h3>' +item.user+'<svg>'+lines +'</svg></li>');
+                            
                     $(list+' ul').append(listitem);
                     var colors = ['blue','green','orange','pink'];
                     var marker = new google.maps.Marker({
@@ -96,7 +101,6 @@
                     });
                     listitem.data('marker',marker);
                 }
-
 
                 // We get the map's default panorama and set up some defaults.
                 // Note that we don't yet set it visible.

@@ -24,6 +24,7 @@ ws.onmessage = function (event) {
         $('#realtimepaintingarea').get(0).appendChild(currentline);
         currentline = $('#realtimepaintingarea polyline').eq($('#realtimepaintingarea polyline').length-1);
         currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':3});
+        currentline.attr('transform', 'scale(0.3)')
         pathtest = message + ' ';
         currentline.attr('points',pathtest);
     } else {
