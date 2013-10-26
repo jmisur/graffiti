@@ -1,37 +1,33 @@
 package org.graffiti.grafroid.drawing;
 
-import android.graphics.Canvas;
 import com.google.inject.Inject;
 import org.graffiti.grafroid.AccelerationMotionEventListener;
 import org.graffiti.grafroid.sensor.Point;
-
-import javax.inject.Named;
 
 /**
  * Handles drawing events as they happen.
  */
 public class DrawingEventHandler implements AccelerationMotionEventListener {
 
-    @Named("DrawingCanvas")
-    private final Canvas mDrawingCanvas;
-
     @Inject
-    public DrawingEventHandler(final Canvas drawingCanvas) {
-        this.mDrawingCanvas = drawingCanvas;
-    }
+    private DrawPath mDrawPath;
 
     @Override
     public void onMotionDownX(final Point p) {
-
+        final ThreeAxisPoint xThreePoint = new ThreeAxisPoint(p, null, null);
+        mDrawPath.addPoint(xThreePoint);
     }
 
     @Override
     public void onMotionDownY(final Point p) {
-
+        final ThreeAxisPoint yThreePoint = new ThreeAxisPoint(null, p, null);
+        mDrawPath.addPoint(yThreePoint);
     }
 
     @Override
     public void onMotionDownZ(final Point p) {
-        
+        final ThreeAxisPoint zThreePoint = new ThreeAxisPoint(null, null, p);
+        mDrawPath.addPoint(zThreePoint);
     }
+
 }
