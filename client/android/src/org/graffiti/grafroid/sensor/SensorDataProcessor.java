@@ -35,7 +35,7 @@ class SensorDataProcessor {
 
 			if (mIsMoving[i] != moving[i]) {
 				if (mIsMoving[i]) {
-					//Log.i(LOG_TAG, "stopped " + i);
+					Log.i(LOG_TAG, "stopped " + i);
 					// motion stopped
 					mIsMoving[i] = false;
 					switch (i) {
@@ -55,7 +55,7 @@ class SensorDataProcessor {
 					}
 
 				} else if (!mIsMoving[i]) {
-					//Log.i(LOG_TAG, "started " + i);
+					Log.i(LOG_TAG, "started " + i);
 					// motion started
 					mIsMoving[i] = true;
 				}

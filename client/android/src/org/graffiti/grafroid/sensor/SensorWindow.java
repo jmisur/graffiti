@@ -1,7 +1,12 @@
 package org.graffiti.grafroid.sensor;
 
+import android.util.Log;
+
 class SensorWindow {
-	private static final double STD_DEV_THRESHOLD = 2;
+	private static final String LOG_TAG = SensorWindow.class.getSimpleName();
+	private static final double STD_DEV_THRESHOLD = 1;
+	
+	private final static boolean sDebug = false;
 
 	private final int mStackSize;
 	private int mIndex = 0;
@@ -24,6 +29,10 @@ class SensorWindow {
 		}
 		if (mFull) {
 			double[] stds = getStdDeviation(mValues);
+			if (sDebug){
+				String log = String.format("%1$.2f, %2$.2f, %3.2f", stds[0],stds[1],stds[2]);
+				Log.i(LOG_TAG, log);				
+			}
 			for (int i = 0; i < 3; i++) {
 				if (stds[i] > STD_DEV_THRESHOLD) {
 					mMoving[i] = true;
