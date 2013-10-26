@@ -29,7 +29,7 @@ class ExtremaFinder {
 	}
 
 	/**
-	 * converted from http://tpgit.github.io/Leptonica/numafunc2_8c_source.html
+	 * converted from http://git.github.io/Leptonica/numafunc2_8c_source.html
 	 * 
 	 * @param points
 	 * @param delta

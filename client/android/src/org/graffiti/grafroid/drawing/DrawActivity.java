@@ -57,6 +57,7 @@ public class DrawActivity extends RoboActivity {
                 case MotionEvent.ACTION_UP:
                     mSensorDataManager.stopRecording();
                     drawCurrentPath();
+                    mDrawingImage.invalidate();
                     return true;
             }
 
