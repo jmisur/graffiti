@@ -9,6 +9,10 @@ import org.springframework.data.mongodb.core.geo.Point
 import org.springframework.data.mongodb.core.index.GeospatialIndex
 import org.springframework.stereotype.Service
 
+import server.app.GraffitiRequest;
+import server.repo.GraffitiData;
+import server.repo.GraffitiRepository;
+
 @Service
 class StorageService {
 
