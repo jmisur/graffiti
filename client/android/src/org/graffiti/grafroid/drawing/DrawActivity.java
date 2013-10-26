@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import org.graffiti.grafroid.R;
 import org.graffiti.grafroid.sensor.SensorDataManager;
@@ -35,10 +36,17 @@ public class DrawActivity extends RoboActivity {
 
     @ContextSingleton
     private static class DrawingControlViewListener implements View.OnTouchListener {
+        @InjectView(R.id.drawingImage)
+        private ImageView mDrawingImage;
+
         @Inject
         private DrawingEventHandler mDrawingEventHandler;
         @Inject
         private SensorDataManager mSensorDataManager;
+        @Inject
+        private DrawingBitmapController mBitmapController;
+        @Inject
+        private DrawPath mPath;
 
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
@@ -48,10 +56,17 @@ public class DrawActivity extends RoboActivity {
                     return true;
                 case MotionEvent.ACTION_UP:
                     mSensorDataManager.stopRecording();
+                    drawCurrentPath();
                     return true;
             }
 
             return false;
+        }
+
+        private void drawCurrentPath() {
+            final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
+            mBitmapController.draw(currentPath);  //XXX do that on the background
+            mBitmapController.render(mDrawingImage);
         }
     }
 }

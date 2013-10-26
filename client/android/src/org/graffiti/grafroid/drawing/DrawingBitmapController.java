@@ -1,6 +1,8 @@
 package org.graffiti.grafroid.drawing;
 
 import android.graphics.*;
+import android.widget.ImageView;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
@@ -34,6 +36,13 @@ public class DrawingBitmapController {
         }
 
         draw(drawPath);
+    }
+
+    public void render(final ImageView view) {
+        Preconditions.checkNotNull(view);
+
+        final Bitmap copyBitmap = Bitmap.createBitmap(mDrawingBitmap);
+        view.setImageBitmap(copyBitmap);
     }
 
     private Paint getPencil() {
