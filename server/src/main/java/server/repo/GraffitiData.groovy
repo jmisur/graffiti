@@ -1,4 +1,4 @@
-package server
+package server.repo
 
 import groovy.transform.Canonical
 
