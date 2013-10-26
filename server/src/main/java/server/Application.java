@@ -7,6 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.config.EnableWebSocket;
 
+import server.web.EchoWebSocketHandler;
+
 @ComponentScan
 @EnableAutoConfiguration
 @EnableWebSocket
