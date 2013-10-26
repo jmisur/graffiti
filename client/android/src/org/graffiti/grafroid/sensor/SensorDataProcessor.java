@@ -53,11 +53,11 @@ class SensorDataProcessor {
 						break;
 					case 1:
 						findPeaks(mYPoints, i);
-						mXPoints.clear();
+						mYPoints.clear();
 						break;
 					case 2:
 						findPeaks(mZPoints, i);
-						mXPoints.clear();
+						mZPoints.clear();
 						break;
 
 					}
