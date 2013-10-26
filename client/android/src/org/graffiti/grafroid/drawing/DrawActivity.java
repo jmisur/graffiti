@@ -12,8 +12,7 @@ import roboguice.inject.ContextSingleton;
 import roboguice.inject.InjectView;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,25 +30,52 @@ import com.jjoe64.graphview.LineGraphView;
  */
 public class DrawActivity extends RoboActivity {
     
+    private final static String        LOG_TAG = DrawActivity.class.getSimpleName();
+    
     @InjectView(R.id.drawingImage)
     private ImageView                  mDrawingImage;
     
     @Inject
     private DrawingControlViewListener mDrawingListener;
     
+    private boolean                    mRecording;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawing);
-        initViews();
     }
     
-    private void initViews() {
-        mDrawingImage.setOnTouchListener(mDrawingListener);
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                mDrawingListener.stopRecording();
+                mRecording = false;                
+                break;
+        }
+        
+        return true;
+        
+    };
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (!mRecording) {
+                    mRecording = true;
+                    mDrawingListener.startRecording();
+                }
+                break;
+        }
+        
+        return true;
     }
     
     @ContextSingleton
-    private static class DrawingControlViewListener implements View.OnTouchListener, DebugDataListener {
+    private static class DrawingControlViewListener implements DebugDataListener {
         @InjectView(R.id.drawingImage)
         private ImageView               mDrawingImage;
         
@@ -66,22 +92,16 @@ public class DrawActivity extends RoboActivity {
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
         
-        @Override
-        public boolean onTouch(final View v, final MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mSensorDataManager.startRecording(mDrawingEventHandler);
-                    mSensorDataManager.setDebugDataListener(this);
-                    
-                    return true;
-                case MotionEvent.ACTION_UP:
-                    mSensorDataManager.stopRecording();
-                    drawCurrentPath();
-                    mDrawingImage.invalidate();
-                    return true;
-            }
+        void startRecording() {
+            mSensorDataManager.startRecording(mDrawingEventHandler);
+            mSensorDataManager.setDebugDataListener(this);
             
-            return false;
+        }
+        
+        public void stopRecording() {
+            mSensorDataManager.stopRecording();
+            drawCurrentPath();
+            mDrawingImage.invalidate();
         }
         
         private void drawCurrentPath() {
