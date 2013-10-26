@@ -18,7 +18,9 @@ class SensorDataProcessor {
 	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
-	SensorWindow mWindow = new SensorWindow(40);
+	SensorWindow mXWindow = new SensorWindow(40);
+	SensorWindow mYWindow = new SensorWindow(40);
+	SensorWindow mZWindow = new SensorWindow(40);
 
 	private AccelerationMotionEventListener mListener;
 	private Optional<DebugDataListener> mDebugListener = Optional.absent();
@@ -34,11 +36,15 @@ class SensorDataProcessor {
 	private boolean[] mIsMoving = new boolean[3];
 
 	public void process(float[] data, long time) {
-		mWindow.addData(data);
-		boolean[] moving = mWindow.isMoving();
-//		for (int i = 0; i < 3; i++) {
-//			Log.i(LOG_TAG, i + " = " + moving[i]);
-//		}
+		mXWindow.addData(data[0], time);
+		mYWindow.addData(data[1], time);
+		mZWindow.addData(data[2], time);
+
+		boolean[] moving = { mXWindow.isMoving(), mYWindow.isMoving(),
+				mZWindow.isMoving() };
+		// for (int i = 0; i < 3; i++) {
+		// Log.i(LOG_TAG, i + " = " + moving[i]);
+		// }
 		for (int i = 0; i < 3; i++) {
 
 			if (mIsMoving[i] != moving[i]) {
@@ -66,6 +72,19 @@ class SensorDataProcessor {
 					Log.i(LOG_TAG, "started " + i);
 					// motion started
 					mIsMoving[i] = true;
+					// add inital points
+					switch (i) {
+					case 0:
+						mXPoints.addAll(mXWindow.createList());
+						break;
+					case 1:
+						mYPoints.addAll(mYWindow.createList());
+						break;
+					case 2:
+						mYPoints.addAll(mZWindow.createList());
+						break;
+					}
+
 				}
 			}
 			if (mIsMoving[i]) {
@@ -97,14 +116,17 @@ class SensorDataProcessor {
 					case 0:
 						findPeaks(mXPoints, i);
 						mXPoints.clear();
+						mXWindow.reset();
 						break;
 					case 1:
 						findPeaks(mYPoints, i);
 						mYPoints.clear();
+						mYWindow.reset();
 						break;
 					case 2:
 						findPeaks(mZPoints, i);
 						mZPoints.clear();
+						mZWindow.reset();
 						break;
 
 					}

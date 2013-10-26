@@ -1,5 +1,9 @@
 package org.graffiti.grafroid.sensor;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.util.Log;
 
 class SensorWindow {
@@ -10,98 +14,72 @@ class SensorWindow {
 	private final static boolean sDebug = false;
 
 	private final int mStackSize;
-	private int mIndex = 0;
-	private final float[][] mValues;
+	private LinkedList<SensorPoint> mValues;
 
 	private boolean mFull = false;
 
-	private boolean[] mMoving = new boolean[3];
+	private boolean mMoving = false;
 
 	public SensorWindow(int stackSize) {
 		mStackSize = stackSize;
-		mValues = new float[mStackSize][3];
+		mValues = new LinkedList<SensorPoint>();
 	}
 
-	public void addData(float[] values) {
-		System.arraycopy(values, 0, mValues[mIndex++], 0, 3);
-		if (mIndex >= mStackSize) {
-			mIndex = 0;
+	public List<SensorPoint> createList() {
+		List<SensorPoint> result = new ArrayList<SensorPoint>(mValues);
+		return result;
+	}
+
+	public void addData(float value, long timestamp) {
+		mValues.add(new SensorPoint(timestamp, value));
+		if (mValues.size() > mStackSize) {
+			mValues.removeFirst();
 			mFull = true;
 		}
 		if (mFull) {
-			double[] stds = getStdDeviation(mValues);
+			double stds = getStdDeviation(mValues);
 			if (sDebug) {
-				String log = String.format("%1$.2f, %2$.2f, %3.2f", stds[0],
-						stds[1], stds[2]);
+				String log = String.format("%1$.2f", stds);
 				Log.i(LOG_TAG, log);
 			}
-			for (int i = 0; i < 3; i++) {
-				if (stds[i] > START_THRESHOLD) {
-					mMoving[i] = true;
-				} else if (stds[i]<STOP_THRESHOLD){
-					mMoving[i] = false;
-				}
+			if (stds > START_THRESHOLD) {
+				mMoving = true;
+			} else if (stds < STOP_THRESHOLD) {
+				mMoving = false;
 			}
 
 		}
 	}
 
-	private double[] getStdDeviation(float[][] values) {
+	private double getStdDeviation(LinkedList<SensorPoint> values) {
 		// Get mean
-		double sumX = 0;
-		double sumY = 0;
-		double sumZ = 0;
+		double sum = 0;
 
 		// int max = 0;
 		for (int i = 0; i < mStackSize; i++) {
-			sumX += values[i][0];
-			sumY += values[i][1];
-			sumZ += values[i][2];
+			sum += values.get(i).mValue;
 		}
 
-		double meanX = sumX / (mStackSize);
-		double meanY = sumY / (mStackSize);
-		double meanZ = sumZ / (mStackSize);
+		double mean = sum / (mStackSize);
 
-		double sumdevX = 0.0f;
-		double sumdevY = 0.0f;
-		double sumdevZ = 0.0f;
-		double deviationX = 0;
-		double deviationY = 0;
-		double deviationZ = 0;
+		double sumdev = 0.0f;
+		double deviation = 0;
 		for (int i = 0; i < mStackSize; i++) {
-			deviationX = mValues[i][0] - meanX;
-			deviationY = mValues[i][1] - meanY;
-			deviationZ = mValues[i][2] - meanZ;
-			sumdevX += (deviationX * deviationX);
-			sumdevY += (deviationY * deviationY);
-			sumdevZ += (deviationZ * deviationZ);
+			deviation = mValues.get(i).mValue - mean;
+			sumdev += (deviation * deviation);
 		}
-		double varianceX = (sumdevX / (mStackSize - 1));
-		double resultX = Math.sqrt(varianceX);
-
-		double varianceY = (sumdevY / (mStackSize - 1));
-		double resultY = Math.sqrt(varianceY);
-
-		double varianceZ = (sumdevZ / (mStackSize - 1));
-		double resultZ = Math.sqrt(varianceZ);
-
-		return new double[] { resultX, resultY, resultZ };
+		double variance = (sumdev / (mStackSize - 1));
+		double result = Math.sqrt(variance);
+		return result;
 	}
 
-	public boolean[] isMoving() {
+	public boolean isMoving() {
 		return mMoving;
 	}
 
 	public void reset() {
-		for (int i = 0; i < 3; i++) {
-			mMoving[i] = false;
-		}
-		for (int i = 0; i < mValues.length; i++) {
-			for (int j = 0; j < 3; j++) {
-				mValues[i][j] = 0;
-			}
-		}
+		mMoving = false;
+		mValues.clear();
 	}
 
 }
