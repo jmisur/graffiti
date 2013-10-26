@@ -18,11 +18,11 @@ public class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		String payload = message.getPayload();
-		log.info("Received " + payload);
-		String echoMessage = "YEAAAHH " + payload;
-		log.debug("Sending " + echoMessage);
-		session.sendMessage(new TextMessage(echoMessage));
+		for (int i = 0; i < 100; i++) {
+			String path = i + "," + i;
+			session.sendMessage(new TextMessage(path));
+			Thread.sleep(100);
+		}
 	}
 
 	@Override
