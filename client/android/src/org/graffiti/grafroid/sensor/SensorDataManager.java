@@ -33,8 +33,6 @@ public class SensorDataManager implements SensorEventListener {
 
 	public void stopRecording() {
 		mSensorManager.unregisterListener(this);
-		mProcessor.stop();
-
 	}
 
 	@Override
