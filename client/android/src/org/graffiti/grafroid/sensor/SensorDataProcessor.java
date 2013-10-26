@@ -137,6 +137,14 @@ class SensorDataProcessor {
 	}
 
 	private void findPeaks(List<SensorPoint> points, int index) {
+	    if (points.isEmpty()){
+	        return;
+	    }
+	    long lastTime = points.get(points.size()-1).mTimeStamp;
+	    for(int i = 0; i<10; i++ ){
+	        points.add(new SensorPoint(lastTime, 0));
+            lastTime+=15;
+	    }
 		ExtremaFinder finder = new ExtremaFinder(points);
 		List<SensorPoint> extrema = finder.getExtrema();
 		String log = "";
