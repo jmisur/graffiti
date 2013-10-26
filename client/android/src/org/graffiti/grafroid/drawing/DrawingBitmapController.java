@@ -49,10 +49,10 @@ public class DrawingBitmapController {
         final Paint pencil = new Paint();
 
         pencil.setAntiAlias(true);
-        pencil.setColor(Color.BLACK);
+        pencil.setColor(Color.RED);
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
-        pencil.setStrokeWidth(5f);
+        pencil.setStrokeWidth(20f);
 
         return pencil;
     }
