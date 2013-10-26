@@ -1,37 +1,29 @@
 package org.graffiti.grafroid.drawing;
 
-import javax.inject.Named;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import android.widget.ImageView;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.inject.Inject;
+import com.google.common.collect.Lists;
+import org.graffiti.grafroid.sensor.SensorPoint;
+
+import java.util.List;
 
 public class DrawingBitmapController {
 
-    private Bitmap mDrawingBitmap;
-    private final Canvas mDrawingCanvas;
+    private void draw(final Bitmap bitmap, final Path drawPath) {
+        Preconditions.checkNotNull(bitmap);
 
-    @Inject
-    public DrawingBitmapController(@Named("DrawingBitmap") final Bitmap drawingBitmap) {
-        this.mDrawingBitmap = drawingBitmap;
-        this.mDrawingCanvas = new Canvas(mDrawingBitmap);
-    }
-
-    public void draw(final Path drawPath) {
         //FIXME temp stuff:
         final Paint pencil = getPencil();
 
-        mDrawingCanvas.drawPath(drawPath, pencil);
+        final Canvas drawingCanvas = new Canvas(bitmap);
+        drawingCanvas.drawPath(drawPath, pencil);
     }
 
-    public void draw(final ImmutableList<ThreeAxisPoint> pathPoints) {
+    private void draw(final Bitmap bitmap, final ImmutableList<ThreeAxisPoint> pathPoints) {
+        Preconditions.checkNotNull(bitmap);
+
         final Path drawPath = new Path();
         //FIXME temp stuff:
         drawPath.moveTo(100, 100);
@@ -40,14 +32,27 @@ public class DrawingBitmapController {
             drawPath.rLineTo((float) threeAxisPoint.getXPoint().mValue, (float) threeAxisPoint.getYPoint().mValue);
         }
 
-        draw(drawPath);
+        draw(bitmap, drawPath);
     }
 
-    public void render(final ImageView view) {
+    public void render(final ImmutableList<ThreeAxisPoint> pathPoints, final ImageView view) {
         Preconditions.checkNotNull(view);
 
-        final Bitmap copyBitmap = Bitmap.createBitmap(mDrawingBitmap);
-        view.setImageBitmap(copyBitmap);
+        final Bitmap drawingBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        final ImmutableList<ThreeAxisPoint> adjustedPoints = adjustForDeviceOrientation(pathPoints);
+        draw(drawingBitmap, adjustedPoints);
+        view.setImageBitmap(drawingBitmap);
+    }
+
+    private ImmutableList<ThreeAxisPoint> adjustForDeviceOrientation(final List<ThreeAxisPoint> sensorPoints) {  //XXX allow parameterized orientation
+        final List<ThreeAxisPoint> adjustedPoints = Lists.newArrayList();
+        for (final ThreeAxisPoint sensorPoint : sensorPoints) {
+            final SensorPoint adjustedPointX = new SensorPoint(sensorPoint.getYPoint().mTimeStamp, sensorPoint.getYPoint().mValue * -1);
+            final SensorPoint adjustedPointY = new SensorPoint(sensorPoint.getXPoint().mTimeStamp, sensorPoint.getXPoint().mValue * -1);
+            //Z ignore now
+            adjustedPoints.add(new ThreeAxisPoint(adjustedPointX, adjustedPointY, sensorPoint.getZPoint()));
+        }
+        return ImmutableList.copyOf(adjustedPoints);
     }
 
     private Paint getPencil() {
@@ -57,7 +62,7 @@ public class DrawingBitmapController {
         pencil.setColor(Color.RED);
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
-        pencil.setStrokeWidth(20f);
+        pencil.setStrokeWidth(5f);
 
         return pencil;
     }

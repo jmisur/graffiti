@@ -23,24 +23,74 @@ import com.google.common.collect.Lists;
         mThreePoints.add(point);
     }
 
+    /*package*/ void clear() {
+        mThreePoints.clear();
+    }
+
     public ImmutableList<ThreeAxisPoint> getInterpolatedPoints() {
         final List<ThreeAxisPoint> pointsCopy = Lists.newArrayList(mThreePoints);
 
-        //TODO real interpolation
-        final List<ThreeAxisPoint> interpolatedPoints = Lists.newArrayList();
+        final List<Long> xUnprocessedTimeStamps = Lists.newArrayList();
+        final List<Long> yUnprocessedTimeStamps = Lists.newArrayList();
+        final long lastXProcessedTimeStamp = 0;
+        final long lastYProcessedTimeStamp = 0;
+        final List<SensorPoint> interpolatedXPoints = Lists.newArrayList();
+        final List<SensorPoint> interpolatedYPoints = Lists.newArrayList();
         for (final ThreeAxisPoint originalPoint : pointsCopy) {
-            final long pointTimeStamp = originalPoint.getTimeStamp();
-            final SensorPoint zeroPoint = new SensorPoint(pointTimeStamp, 0);
+            final SensorPoint originalXPoint = originalPoint.getXPoint();
+            final SensorPoint originalYPoint = originalPoint.getYPoint();
+            final long originalPointTimeStamp = originalPoint.getTimeStamp();
 
-            final SensorPoint originalPointX = originalPoint.getXPoint();
-            final SensorPoint interpolatedPointX = originalPointX != null ? new SensorPoint(pointTimeStamp, originalPointX.mValue * INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO) : zeroPoint;
-            final SensorPoint originalPointY = originalPoint.getYPoint();
-            final SensorPoint interpolatedPointY = originalPointY != null ? new SensorPoint(pointTimeStamp, originalPointY.mValue * INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO) : zeroPoint;
-            final SensorPoint originalPointZ = originalPoint.getZPoint();
-            final SensorPoint interpolatedPointZ = originalPointZ != null ? new SensorPoint(pointTimeStamp, originalPointZ.mValue * INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO) : zeroPoint;
-            final ThreeAxisPoint interpolatedPoint = new ThreeAxisPoint(interpolatedPointX, interpolatedPointY, interpolatedPointZ);
+            if (originalXPoint != null) {
+                final double xDistance = originalXPoint.mValue;
+                final long timeDistance = originalXPoint.mTimeStamp - lastXProcessedTimeStamp;
+                for (final long timeStamp : xUnprocessedTimeStamps) {
+                    final double timeStampDistance = ((double)(timeStamp - lastXProcessedTimeStamp)) / timeDistance;
+                    final double xDistanceAtTimeStamp = xDistance * timeStampDistance;
+                    interpolatedXPoints.add(new SensorPoint(timeStamp, xDistanceAtTimeStamp));
+                }
+                xUnprocessedTimeStamps.clear();
 
-            interpolatedPoints.add(interpolatedPoint);
+                interpolatedXPoints.add(originalXPoint);
+            } else {
+                xUnprocessedTimeStamps.add(originalPointTimeStamp);
+            }
+
+            if (originalYPoint != null) {
+                final double yDistance = originalYPoint.mValue;
+                final long timeDistance = originalYPoint.mTimeStamp - lastYProcessedTimeStamp;
+                for (final long timeStamp : yUnprocessedTimeStamps) {
+                    final double timeStampDistance = ((double)(timeStamp - lastYProcessedTimeStamp)) / timeDistance;
+                    final double yDistanceAtTimeStamp = yDistance * timeStampDistance;
+                    interpolatedYPoints.add(new SensorPoint(timeStamp, yDistanceAtTimeStamp));
+                }
+                yUnprocessedTimeStamps.clear();
+
+                interpolatedYPoints.add(originalYPoint);
+            } else {
+                yUnprocessedTimeStamps.add(originalPointTimeStamp);
+            }
+        }
+
+        //process what remains
+        for (final long timeStamp : xUnprocessedTimeStamps) {
+            interpolatedXPoints.add(new SensorPoint(timeStamp, 0));
+        }
+        for (final long timeStamp : yUnprocessedTimeStamps) {
+            interpolatedYPoints.add(new SensorPoint(timeStamp, 0));
+        }
+
+        Preconditions.checkState(interpolatedXPoints.size() == interpolatedYPoints.size());
+
+        final List<ThreeAxisPoint> interpolatedPoints = Lists.newArrayList();
+        for (int i = 0; i < interpolatedXPoints.size(); ++i) {
+            final SensorPoint interpolatedXPoint = interpolatedXPoints.get(i);
+            final SensorPoint interpolatedYPoint = interpolatedYPoints.get(i);
+            final ThreeAxisPoint point = new ThreeAxisPoint(
+                    new SensorPoint(interpolatedXPoint.mTimeStamp, interpolatedXPoint.mValue * INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO),
+                    new SensorPoint(interpolatedYPoint.mTimeStamp, interpolatedYPoint.mValue * INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO),
+                    new SensorPoint(interpolatedXPoint.mTimeStamp, 0));
+            interpolatedPoints.add(point);
         }
 
         return ImmutableList.copyOf(interpolatedPoints);

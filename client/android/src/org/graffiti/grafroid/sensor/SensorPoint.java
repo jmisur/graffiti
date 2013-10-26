@@ -13,7 +13,7 @@ public class SensorPoint {
     
     @Override
     public String toString() {
-        return String.format(Locale.US, "(%1$.0f, %2$d", mValue, mTimeStamp);
+        return String.format(Locale.US, "(val: %1$.0f, time: %2$d)", mValue, mTimeStamp);
     }
     
 }
