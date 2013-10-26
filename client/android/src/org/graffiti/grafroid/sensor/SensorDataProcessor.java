@@ -7,13 +7,13 @@ import org.graffiti.grafroid.AccelerationMotionEventListener;
 
 import android.util.Log;
 
-public class SensorDataProcessor {
+class SensorDataProcessor {
 	private final static String LOG_TAG = SensorDataProcessor.class
 			.getSimpleName();
 
-	private List<Point> mXPoints = new ArrayList<Point>();
-	private List<Point> mYPoints = new ArrayList<Point>();
-	private List<Point> mZPoints = new ArrayList<Point>();
+	private List<SensorPoint> mXPoints = new ArrayList<SensorPoint>();
+	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
+	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
 	SensorWindow mWindow = new SensorWindow(10);
 
@@ -28,10 +28,14 @@ public class SensorDataProcessor {
 	public void process(float[] data, long time) {
 		mWindow.addData(data);
 		boolean[] moving = mWindow.isMoving();
+//		for (int i = 0; i < 3; i++) {
+//			Log.i(LOG_TAG, i + " = " + moving[i]);
+//		}
 		for (int i = 0; i < 3; i++) {
 
 			if (mIsMoving[i] != moving[i]) {
 				if (mIsMoving[i]) {
+					//Log.i(LOG_TAG, "stopped " + i);
 					// motion stopped
 					mIsMoving[i] = false;
 					switch (i) {
@@ -51,35 +55,45 @@ public class SensorDataProcessor {
 					}
 
 				} else if (!mIsMoving[i]) {
+					//Log.i(LOG_TAG, "started " + i);
 					// motion started
 					mIsMoving[i] = true;
 				}
 			}
 			if (mIsMoving[i]) {
-				mXPoints.add(new Point(time, data[0]));
-				mYPoints.add(new Point(time, data[0]));
-				mZPoints.add(new Point(time, data[0]));
+				mXPoints.add(new SensorPoint(time, data[0]));
+				mYPoints.add(new SensorPoint(time, data[0]));
+				mZPoints.add(new SensorPoint(time, data[0]));
 			}
 		}
 	}
 
-	private void findPeaks(List<Point> points, int index) {
+	private void findPeaks(List<SensorPoint> points, int index) {
 		ExtremaFinder finder = new ExtremaFinder(points);
-		List<Point> extrema = finder.getExtrema();
+		List<SensorPoint> extrema = finder.getExtrema();
 		if (extrema.size() > 0) {
 			for (int i = 0; i < extrema.size() - 1; i++) {
-				Log.i(LOG_TAG, index + " = " + extrema.size());
+				String log="";
 				switch (index) {
 				case 0:
+					log = "X";
 					mListener.onMotionDownX(extrema.get(i));
 					break;
 				case 1:
+					log = "Y";
 					mListener.onMotionDownY(extrema.get(i));
 					break;
 				case 2:
+					log = "Z";
 					mListener.onMotionDownZ(extrema.get(i));
 					break;
 				}
+				if (extrema.get(i).mValue<0){
+					Log.i(LOG_TAG, "DOWN "+ log);					
+				} else {
+					Log.i(LOG_TAG, "UP "+ log);				
+				}
+
 			}
 		}
 

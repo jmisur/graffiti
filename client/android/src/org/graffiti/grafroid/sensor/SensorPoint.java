@@ -1,10 +1,10 @@
 package org.graffiti.grafroid.sensor;
 
-public class Point {
+public class SensorPoint {
 	public final long mTimeStamp;
 	public final double mValue;
 
-	public Point(final long timeStamp, final double value) {
+	public SensorPoint(final long timeStamp, final double value) {
 		this.mTimeStamp = timeStamp;
 		this.mValue = value;
 	}

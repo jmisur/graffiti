@@ -1,13 +1,13 @@
 package org.graffiti.grafroid;
 
-import org.graffiti.grafroid.sensor.Point;
+import org.graffiti.grafroid.sensor.SensorPoint;
 
 public interface AccelerationMotionEventListener {
 
-	void onMotionDownX(Point p);
+	void onMotionDownX(SensorPoint p);
 
-	void onMotionDownY(Point p);
+	void onMotionDownY(SensorPoint p);
 
-	void onMotionDownZ(Point p);
+	void onMotionDownZ(SensorPoint p);
 
 }

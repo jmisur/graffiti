@@ -3,21 +3,21 @@ package org.graffiti.grafroid.sensor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtremaFinder {
-	private List<Point> data;
+class ExtremaFinder {
+	private List<SensorPoint> data;
 
-	ExtremaFinder(List<Point> data) {
+	ExtremaFinder(List<SensorPoint> data) {
 		this.data = data;
 	}
 
-	public List<Point> getExtrema() {
+	public List<SensorPoint> getExtrema() {
 		float sum = 0;
 		float moment = 0;
 		int i = 0;
 		float val = 0;
 
 		for (i = 0; i < data.size(); i++) {
-			Point g = data.get(i);
+			SensorPoint g = data.get(i);
 
 			val = (float) Math.abs(g.mValue);
 			sum += val;
@@ -35,14 +35,14 @@ public class ExtremaFinder {
 	 * @param delta
 	 * @return
 	 */
-	private List<Point> numaFindExtrema(List<Point> points, float delta) {
+	private List<SensorPoint> numaFindExtrema(List<SensorPoint> points, float delta) {
 		int i, n, loc, direction;
 		boolean found = false;
 		double startval = 0;
 		double val = 0;
 		double maxval = 0;
 		double minval = 0;
-		List<Point> nad = new ArrayList<Point>();
+		List<SensorPoint> nad = new ArrayList<SensorPoint>();
 
 		n = points.size();
 

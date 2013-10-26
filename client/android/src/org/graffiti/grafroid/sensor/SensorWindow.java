@@ -1,7 +1,7 @@
 package org.graffiti.grafroid.sensor;
 
-public class SensorWindow {
-	private static final double STD_DEV_THRESHOLD = 3;
+class SensorWindow {
+	private static final double STD_DEV_THRESHOLD = 2;
 
 	private final int mStackSize;
 	private int mIndex = 0;

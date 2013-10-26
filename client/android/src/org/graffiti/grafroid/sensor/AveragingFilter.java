@@ -1,6 +1,6 @@
 package org.graffiti.grafroid.sensor;
 
-public class AveragingFilter {
+class AveragingFilter {
 	// number of values which are averaged
 	private final int mStackSize;
 	private int mIndex = 0;
