@@ -5,6 +5,27 @@
    ========================================================================== */
 
 
+@font-face{
+    font-family:'Painterz';
+    src:url('/fonts/Painterz.ttf.eot');
+    src:url('/fonts/Painterz.ttf.svg#ProximaNovaRegular') format('svg'),
+    url('/fonts/Painterz.ttf.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Painterz.ttf.woff') format('woff'),
+    url('/fonts/Painterz.ttf') format('truetype');
+    font-weight:normal;
+    font-style:normal;
+
+}
+
+
+
+
+
+
+.navbar-brand, b, strong, h1,h2,h3{
+    font-family: Painterz !important;
+
+}
 
 
 
