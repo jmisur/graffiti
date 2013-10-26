@@ -81,7 +81,7 @@ class SensorDataProcessor {
 						mYPoints.addAll(mYWindow.createList());
 						break;
 					case 2:
-						mYPoints.addAll(mZWindow.createList());
+						mZPoints.addAll(mZWindow.createList());
 						break;
 					}
 
