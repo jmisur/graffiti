@@ -1,10 +1,9 @@
 package org.graffiti.grafroid.drawing;
 
-import com.google.inject.Inject;
 import org.graffiti.grafroid.AccelerationMotionEventListener;
 import org.graffiti.grafroid.sensor.SensorPoint;
 
-import javax.inject.Singleton;
+import com.google.inject.Inject;
 
 /**
  * Handles drawing events as they happen.

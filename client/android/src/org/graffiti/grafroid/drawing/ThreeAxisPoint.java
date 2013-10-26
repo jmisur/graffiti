@@ -1,8 +1,9 @@
 package org.graffiti.grafroid.drawing;
 
+import org.graffiti.grafroid.sensor.SensorPoint;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import org.graffiti.grafroid.sensor.SensorPoint;
 
 public class ThreeAxisPoint {
     private final SensorPoint pX;

@@ -83,7 +83,7 @@ public class DebugActivity extends RoboActivity implements
 	}
 
 	@Override
-	public void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema) {
+	public void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema, int index) {
 
 		GraphViewData[] pointArray = pointListToGraphArray(points);
 		GraphViewData[] extremaArray = pointListToGraphArray(extrema);

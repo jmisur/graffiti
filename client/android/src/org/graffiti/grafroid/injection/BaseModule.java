@@ -1,6 +1,7 @@
 package org.graffiti.grafroid.injection;
 
 import android.graphics.Bitmap;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
