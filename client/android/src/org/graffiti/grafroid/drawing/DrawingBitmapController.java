@@ -1,12 +1,17 @@
 package org.graffiti.grafroid.drawing;
 
-import android.graphics.*;
+import javax.inject.Named;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.widget.ImageView;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-
-import javax.inject.Named;
 
 public class DrawingBitmapController {
 

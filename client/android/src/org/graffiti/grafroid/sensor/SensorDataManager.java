@@ -43,7 +43,7 @@ public class SensorDataManager implements SensorEventListener {
 	}
 
 	public interface DebugDataListener {
-		void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema);
+		void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema, int index);
 	}
 
 	public void setDebugDataListener(DebugDataListener debugListener) {

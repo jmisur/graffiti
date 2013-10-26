@@ -141,7 +141,7 @@ class SensorDataProcessor {
 		List<SensorPoint> extrema = finder.getExtrema();
 		String log = "";
 		if (mDebugListener.isPresent()) {
-			mDebugListener.get().onDebugData(points, extrema);
+			mDebugListener.get().onDebugData(points, extrema, index);
 		}
 
 		switch (index) {
