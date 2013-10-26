@@ -28,10 +28,12 @@
 }
 
 
-.mt1{
-    margin-top:15px;
-}
-
+.mt1{margin-top:15px;}
+.mt2{margin-top:30px;}
+.mt3{margin-top:45px;}
+.mt4{margin-top:60px;}
+.mt5{margin-top:75px;}
+.mt6{margin-top:90px;}
 
 .map{
     width: 100%;
