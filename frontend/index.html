@@ -63,13 +63,7 @@
                             clear_lists();
                             var c = json.data.length;
                             for(var i=0;i<c;i++){
-                                add_item(json.data[i], '#tabnearest');
-                                new google.maps.Marker({
-                                    position: new google.maps.LatLng(json.data[i].latitude, json.data[i].longitude),
-                                    map: map,
-                                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
-                                    title: json.data[i].description
-                                });
+                                add_item(json.data[i], '#tabnearest',i);
                             }
                         }
                     });
@@ -80,14 +74,27 @@
                 google.maps.event.addListener(map, 'zoom_changed', cardchange);
 
                 function clear_lists(){
-                    $('#tabnearest li').remove();
-                    $('#tabnlive li').remove();
-                    $('#tabpopular li').remove();
+
+                    $('#tabnearest li, #tabnlive li, #tabpopular li').each(function(){
+                        $(this).data('marker').setMap(null);
+                        $(this).remove();
+                    })
+
                 }
 
-                function add_item(item, list){
-                    $(list+' ul').append($('<li class="list-group-item">' +
-                            '<h3>'+item.description+'</h3>' +item.user+'<svg><polyline points="'+item.data+'" style="fill:none;stroke:black;stroke-width:3" /></svg></li>'));
+                function add_item(item, list, no){
+                    var listitem = $('<li class="list-group-item">' +
+                            '<h3>'+item.description+'</h3>' +item.user+'<svg><polyline points="'+item.data+'" style="fill:none;stroke:black;stroke-width:3" /></svg></li>')
+                    $(list+' ul').append(listitem);
+                    var colors = ['blue','green','orange','pink'];
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(item.latitude, item.longitude),
+                        map: map,
+                        icon: 'img/pinpoint_'+colors[(no%4)]+'_50x70px.png',
+                        //icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
+                        title: item.description
+                    });
+                    listitem.data('marker',marker);
                 }
 
 
@@ -123,37 +130,7 @@
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
-    <!--<div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>&lt;!&ndash;/.navbar-collapse &ndash;&gt;
-      </div>
-    </div>-->
+
     <div class="container ">
         <div class="row">
             <div class="col-lg-3">
@@ -211,7 +188,7 @@
                 <input id="text" />
                 <button id="send" onclick="send();">Send</button>
                 <textarea id="message" style="width: 300px; height: 300px;"></textarea>
-                <svg height="200" width="200" style="border:1px solid red" id="realtimepaintingarea" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <svg height="500" width="500" style="border:1px solid red" id="realtimepaintingarea" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
                 </svg>
 

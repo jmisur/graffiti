@@ -1,6 +1,6 @@
 var ws = null;
-
-ws = new SockJS("http://localhost:8080/echo");
+var serverip = '192.168.1.150:8080';
+ws = new SockJS("http://"+serverip+"/echo");
 ws.onopen = function () {
     print('Connected');
 };
