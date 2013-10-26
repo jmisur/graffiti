@@ -1,17 +1,21 @@
 package org.graffiti.grafroid.sensor;
 
+import java.util.List;
+
+import org.graffiti.grafroid.AccelerationMotionEventListener;
+
+import roboguice.inject.ContextSingleton;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import com.google.inject.Inject;
-import org.graffiti.grafroid.AccelerationMotionEventListener;
-import roboguice.inject.ContextSingleton;
 
 @ContextSingleton
 public class SensorDataManager implements SensorEventListener {
 
-    private final SensorManager mSensorManager;
+	private final SensorManager mSensorManager;
 
 	private Sensor mLinearAccelerometerSensor;
 	private long mStartRecordTimestamp = -1;
@@ -19,10 +23,11 @@ public class SensorDataManager implements SensorEventListener {
 
 	private AveragingFilter mFilter = new AveragingFilter(5);
 
-    @Inject
+	@Inject
 	public SensorDataManager(final SensorManager sensorManager) {
-        mSensorManager = sensorManager;
-		mLinearAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+		mSensorManager = sensorManager;
+		mLinearAccelerometerSensor = mSensorManager
+				.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 	}
 
 	public void startRecording(AccelerationMotionEventListener listener) {
@@ -34,6 +39,15 @@ public class SensorDataManager implements SensorEventListener {
 
 	public void stopRecording() {
 		mSensorManager.unregisterListener(this);
+		mProcessor.stop();
+	}
+
+	public interface DebugDataListener {
+		void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema);
+	}
+
+	public void setDebugDataListener(DebugDataListener debugListener) {
+		this.mProcessor.setDebugDataListener(debugListener);
 	}
 
 	@Override
