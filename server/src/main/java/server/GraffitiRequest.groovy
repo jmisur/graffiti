@@ -9,6 +9,6 @@ class GraffitiRequest {
 	String user
 	String description
 	String data;
-	String latitude;
-	String longitude;
+	double latitude;
+	double longitude;
 }

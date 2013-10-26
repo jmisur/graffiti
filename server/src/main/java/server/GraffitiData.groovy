@@ -11,5 +11,5 @@ class GraffitiData {
 	String user
 	String description
 	String data
-	List<String> loc
+	double[] loc
 }

@@ -6,17 +6,17 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class DrawPath {
+/*package*/ class DrawPath {
 
     private final List<ThreeAxisPoint> mThreePoints = Lists.newArrayList();
 
-    /*package*/ void addPoint(final ThreeAxisPoint point) {
+    public void addPoint(final ThreeAxisPoint point) {
         Preconditions.checkNotNull(point);
 
         mThreePoints.add(point);
     }
 
-    /*package*/ ImmutableList<ThreeAxisPoint> getInterpolatedPoints() {
+    public ImmutableList<ThreeAxisPoint> getInterpolatedPoints() {
         final List<ThreeAxisPoint> interpolatedPoints = Lists.newArrayList(mThreePoints);
 
         //TODO interpolation
