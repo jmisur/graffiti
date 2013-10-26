@@ -9,6 +9,8 @@ class GraffitiResponse {
 	String[] data
 	String latitude
 	String longitude
+	String height
+	String width
 
 	GraffitiResponse(GraffitiData data) {
 		user = data.user
@@ -16,5 +18,7 @@ class GraffitiResponse {
 		this.data = data.data
 		latitude = data.loc[0]
 		longitude = data.loc[1]
+		height = data.height
+		width = data.width
 	}
 }

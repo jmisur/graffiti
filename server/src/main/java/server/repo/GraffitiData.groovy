@@ -10,6 +10,8 @@ class GraffitiData {
 
 	String user
 	String description
-	String[] data
+	Integer height
+	Integer width
 	double[] loc
+	String[] data
 }
