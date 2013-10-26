@@ -35,16 +35,13 @@
         <script>
             var map;
             var panorama;
-            var astorPlace = new google.maps.LatLng(40.729884, -73.990988);
-            var busStop = new google.maps.LatLng(40.729559678851025, -73.99074196815491);
-            var cafe = new google.maps.LatLng(40.730031233910694, -73.99142861366272);
-            var bank = new google.maps.LatLng(40.72968163306612, -73.9911389350891);
+
 
             function initialize() {
 
                 // Set up the map
                 var mapOptions = {
-                    center: astorPlace,
+                    center: new google.maps.LatLng(52.519955, 13.403888),
                     zoom: 18,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
                     streetViewControl: false
@@ -52,45 +49,52 @@
                 map = new google.maps.Map(document.getElementById('map-canvas'),
                         mapOptions);
 
-                google.maps.event.addListener(map, 'dragend', function(evt) {
-                    // 3 seconds after the center of the map has changed, pan back to the
-                    // marker.
-                    //map.getZoom();
 
-                    console.log(map.getBounds().getNorthEast().lb);
-                    console.log(map.getBounds().getNorthEast().lb);
-                    console.log(map.getBounds().getSouthWest().lb);
-                    console.log(map.getBounds().getSouthWest().lb);
-                    console.log(map.getBounds());
-                });
+                var cardchange = function(evt) {
+                    lat2 = map.getBounds().getNorthEast().lat();//west to east
+                    lng2 = map.getBounds().getNorthEast().lng();
+                    lat1 = map.getBounds().getSouthWest().lat();
+                    lng1 = map.getBounds().getSouthWest().lng();
+                    $.ajax({
+                        url:"http://192.168.1.150:8080/find?lat0="+lat1+"&long0="+lng1+"&lat1="+lat2+"&long1="+lng2,
+                        dataType: 'json',
+                        success:function(json){
+                            console.log(json);
+                            clear_lists();
+                            var c = json.data.length;
+                            for(var i=0;i<c;i++){
+                                add_item(json.data[i], '#tabnearest');
+                                new google.maps.Marker({
+                                    position: new google.maps.LatLng(json.data[i].latitude, json.data[i].longitude),
+                                    map: map,
+                                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
+                                    title: json.data[i].description
+                                });
+                            }
+                        }
+                    });
+                }
 
 
-                // Setup the markers on the map
-                var cafeMarker = new google.maps.Marker({
-                    position: cafe,
-                    map: map,
-                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
-                    title: 'Cafe'
-                });
+                google.maps.event.addListener(map, 'dragend', cardchange);
+                google.maps.event.addListener(map, 'zoom_changed', cardchange);
 
-                var bankMarker = new google.maps.Marker({
-                    position: bank,
-                    map: map,
-                    icon: 'graffiti.png',
-                    title: 'Bank'
-                });
+                function clear_lists(){
+                    $('#tabnearest li').remove();
+                    $('#tabnlive li').remove();
+                    $('#tabpopular li').remove();
+                }
 
-                var busMarker = new google.maps.Marker({
-                    position: busStop,
-                    map: map,
-                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=bus|FFFF00',
-                    title: 'Bus Stop'
-                });
+                function add_item(item, list){
+                    $(list+' ul').append($('<li class="list-group-item">' +
+                            '<h3>'+item.description+'</h3>' +item.user+'<svg><polyline points="'+item.data+'" style="fill:none;stroke:black;stroke-width:3" /></svg></li>'));
+                }
+
 
                 // We get the map's default panorama and set up some defaults.
                 // Note that we don't yet set it visible.
                 panorama = map.getStreetView();
-                panorama.setPosition(astorPlace);
+                //panorama.setPosition(astorPlace);
                 panorama.setPov(/** @type {google.maps.StreetViewPov} */({
                     heading: 265,
                     pitch: 0
@@ -119,7 +123,7 @@
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <!--<div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -147,15 +151,22 @@
               </ul>
             </li>
           </ul>
-        </div><!--/.navbar-collapse -->
+        </div>&lt;!&ndash;/.navbar-collapse &ndash;&gt;
       </div>
-    </div>
-    <div class="container mt1">
+    </div>-->
+    <div class="container ">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-3">
+                <img src="img/logo240.jpg" />
+            </div>
+            <div class="col-lg-6 mt4">
+                <input class="form-control input-lg" placeholder="search place" type="text" placeholder=".input-lg">
+            </div>
+            <div class="col-lg-3 mt4">
+                <button type="button" class="btn btn-primary btn-lg">Search</button>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt1">
             <div class="col-lg-3">
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#tabnearest" data-toggle="tab">Nearest</a></li>
@@ -166,44 +177,24 @@
                     <div class="tab-pane active" id="tabnearest">
                         <h2>Nearest graffities</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">Cras justo odio</li>
-                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                            <li class="list-group-item">Morbi leo risus</li>
-                            <li class="list-group-item">Porta ac consectetur ac</li>
-                            <li class="list-group-item">Vestibulum at eros</li>
+
                         </ul>
                     </div>
                     <div  class="tab-pane" id="tabnlive">
                         <h2>Live graffities</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">Cras justo odio</li>
-                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                            <li class="list-group-item">Morbi leo risus</li>
-                            <li class="list-group-item">Porta ac consectetur ac</li>
-                            <li class="list-group-item">Vestibulum at eros</li>
+
                         </ul>
                     </div>
                     <div  class="tab-pane" id="tabpopular">
                         <h2>Most popular</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">Cras justo odio</li>
-                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                            <li class="list-group-item">Morbi leo risus</li>
-                            <li class="list-group-item">Porta ac consectetur ac</li>
-                            <li class="list-group-item">Vestibulum at eros</li>
+
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="col-lg-9 ">
-                <div>
-                    <div class="col-lg-9 ">
-                        <input class="form-control input-lg" placeholder="search place" type="text" placeholder=".input-lg">
-                    </div>
-                    <div class="col-lg-3 ">
-                        <button type="button" class="btn btn-primary btn-lg">Search</button>
-                    </div>
-                </div>
 
 
 

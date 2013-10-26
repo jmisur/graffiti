@@ -1,6 +1,6 @@
 var ws = null;
 
-ws = new SockJS("http://192.168.1.150:8080/echo");
+ws = new SockJS("http://localhost:8080/echo");
 ws.onopen = function () {
     print('Connected');
 };
@@ -12,24 +12,27 @@ ws.onmessage = function (event) {
     print('Received: ' + event.data);
     var message = event.data;
 
-    if(message=='stop'){
+    if(message == 'stop'){
         currentline = null;
-    }
-    if(currentline == null){
+    } else if(currentline == null){
         //new line starts
         //currentline = $('<polyline points="1,1 10,10" style="fill:none;stroke:black;stroke-width:3" />');
         xmlns = "http://www.w3.org/2000/svg";
         currentline = document.createElementNS(xmlns,"polyline");
-        console.log(currentline);
+        //console.log(currentline);
         //currentline = $('#realtimepaintingarea polyline');
         $('#realtimepaintingarea').get(0).appendChild(currentline);
         currentline = $('#realtimepaintingarea polyline').eq($('#realtimepaintingarea polyline').length-1);
         currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':3});
-        pathtest = '';
+        pathtest = message + ' ';
+        currentline.attr('points',pathtest);
+    } else {
+        pathtest += message +' ';
+        currentline.attr('points',pathtest);
+        //$('#realtimepaintingarea').attr('preserveAspectRatio', 'xMinYMin meet')
+        //$('#realtimepaintingarea').attr('viewBox', '0 0 200 200')
     }
-    pathtest += message+' ';
-    currentline.attr('points',pathtest);
-    //console.log(message);
+    console.log(message);
 };
 
 ws.onclose = function () {
