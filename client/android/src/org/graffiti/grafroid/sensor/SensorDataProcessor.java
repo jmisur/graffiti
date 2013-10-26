@@ -163,9 +163,10 @@ class SensorDataProcessor {
 			log = "Z";
 			break;
 		}
+		extrema.add(points.get(0));
 		if (extrema.size() > 0) {
 			// Log.i(LOG_TAG, "FOUND " + extrema.size() + " PEAKS FOR " + log);
-
+		    
 			for (int i = 0; i < extrema.size() - 1; i++) {
 				switch (index) {
 				case 0:
