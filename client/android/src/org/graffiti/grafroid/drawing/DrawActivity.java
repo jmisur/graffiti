@@ -1,11 +1,13 @@
-package org.graffiti.grafroid;
-
-import org.graffiti.grafroid.sensor.SensorDataManager;
+package org.graffiti.grafroid.drawing;
 
 import android.app.Activity;
-import android.hardware.Sensor;
 import android.os.Bundle;
+import org.graffiti.grafroid.R;
+import org.graffiti.grafroid.processing.SensorDataManager;
 
+/**
+ * Activity showing the graffiti drawing.
+ */
 public class DrawActivity extends Activity {
 	private SensorDataManager mSensorData;
 
@@ -16,6 +18,7 @@ public class DrawActivity extends Activity {
         setContentView(R.layout.main);
         mSensorData = new SensorDataManager(this);        
         //@guil call mSensorData.startRecording(listener) and mSensorData.stopRecording()  
-        
+
+
     }
 }
