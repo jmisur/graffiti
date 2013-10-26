@@ -3,6 +3,7 @@ package org.graffiti.grafroid.drawing;
 import android.graphics.Canvas;
 import com.google.inject.Inject;
 import org.graffiti.grafroid.AccelerationMotionEventListener;
+import org.graffiti.grafroid.sensor.Point;
 
 import javax.inject.Named;
 

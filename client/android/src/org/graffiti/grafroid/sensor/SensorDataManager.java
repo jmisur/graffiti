@@ -12,7 +12,6 @@ public class SensorDataManager implements SensorEventListener {
 	private SensorManager mSensorManager;
 	private Sensor mLinearAccelerometerSensor;
 	private long mStartRecordTimestamp = -1;
-	private AccelerationMotionEventListener mMotionListener;
 	private SensorDataProcessor mProcessor;
 
 	private AveragingFilter mFilter = new AveragingFilter(5);
@@ -27,7 +26,6 @@ public class SensorDataManager implements SensorEventListener {
 
 	public void startRecording(AccelerationMotionEventListener listener) {
 		mProcessor = new SensorDataProcessor(listener);
-		this.mMotionListener = listener;
 		mSensorManager.registerListener(this, mLinearAccelerometerSensor,
 				SensorManager.SENSOR_DELAY_FASTEST);
 
@@ -35,6 +33,7 @@ public class SensorDataManager implements SensorEventListener {
 
 	public void stopRecording() {
 		mSensorManager.unregisterListener(this);
+		mProcessor.stop();
 
 	}
 
