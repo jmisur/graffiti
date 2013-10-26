@@ -42,12 +42,11 @@
                 // Set up the map
                 var mapOptions = {
                     center: new google.maps.LatLng(52.519955, 13.403888),
-                    zoom: 18,
+                    zoom: 10,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
                     streetViewControl: true
                 };
-                map = new google.maps.Map(document.getElementById('map-canvas'),
-                        mapOptions);
+                map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
 
 
                 var cardchange = function(evt) {
@@ -74,7 +73,6 @@
                 google.maps.event.addListener(map, 'zoom_changed', cardchange);
 
                 function clear_lists(){
-
                     $('#tabnearest li, #tabnlive li, #tabpopular li').each(function(){
                         $(this).data('marker').setMap(null);
                         $(this).remove();
@@ -101,12 +99,8 @@
                     });
                     listitem.data('marker',marker);
                     google.maps.event.addListener(marker, 'click', function() {
-                        //map.setCenter(marker.getPosition());
-                        panorama.setPosition(marker.getPosition());
-
-
-
-
+                    //map.setCenter(marker.getPosition());
+                    panorama.setPosition(marker.getPosition());
 
                         var SVW_MAX=1000; // maximum street-view distance in meters
                         var SVW_INC=25;  // increment street-view distance in meters
@@ -131,12 +125,6 @@
                             });
                         }
                         resolveStreetView(marker.getPosition(),SVW_INC);
-
-
-
-
-
-                        //panorama.setVisible(true);
 
                     });
 
@@ -179,7 +167,9 @@
                         panorama.setVisible(false);
                     }
                 }
-
+                google.maps.event.addListenerOnce(map, 'idle', function(){
+                    cardchange();
+                });
             }
 
 
