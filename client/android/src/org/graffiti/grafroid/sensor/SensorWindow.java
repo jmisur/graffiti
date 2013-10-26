@@ -4,7 +4,8 @@ import android.util.Log;
 
 class SensorWindow {
 	private static final String LOG_TAG = SensorWindow.class.getSimpleName();
-	private static final double STD_DEV_THRESHOLD = 4;
+	private static final double START_THRESHOLD = 5;
+	private static final double STOP_THRESHOLD = 2;
 
 	private final static boolean sDebug = false;
 
@@ -35,9 +36,9 @@ class SensorWindow {
 				Log.i(LOG_TAG, log);
 			}
 			for (int i = 0; i < 3; i++) {
-				if (stds[i] > STD_DEV_THRESHOLD) {
+				if (stds[i] > START_THRESHOLD) {
 					mMoving[i] = true;
-				} else {
+				} else if (stds[i]<STOP_THRESHOLD){
 					mMoving[i] = false;
 				}
 			}

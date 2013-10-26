@@ -18,7 +18,7 @@ class SensorDataProcessor {
 	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
-	SensorWindow mWindow = new SensorWindow(30);
+	SensorWindow mWindow = new SensorWindow(40);
 
 	private AccelerationMotionEventListener mListener;
 	private Optional<DebugDataListener> mDebugListener = Optional.absent();
@@ -36,9 +36,9 @@ class SensorDataProcessor {
 	public void process(float[] data, long time) {
 		mWindow.addData(data);
 		boolean[] moving = mWindow.isMoving();
-		for (int i = 0; i < 3; i++) {
-			Log.i(LOG_TAG, i + " = " + moving[i]);
-		}
+//		for (int i = 0; i < 3; i++) {
+//			Log.i(LOG_TAG, i + " = " + moving[i]);
+//		}
 		for (int i = 0; i < 3; i++) {
 
 			if (mIsMoving[i] != moving[i]) {
