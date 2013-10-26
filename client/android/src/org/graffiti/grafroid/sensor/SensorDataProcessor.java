@@ -146,7 +146,11 @@ class SensorDataProcessor {
             lastTime+=15;
 	    }
 		ExtremaFinder finder = new ExtremaFinder(points);
-		List<SensorPoint> extrema = finder.getExtrema();
+		List<SensorPoint> e = finder.getExtrema();
+		List<SensorPoint> extrema = new ArrayList<SensorPoint>();
+	    extrema.add(points.get(0));
+	    extrema.addAll(e);
+
 		String log = "";
 		if (mDebugListener.isPresent()) {
 			mDebugListener.get().onDebugData(points, extrema, index);
@@ -163,7 +167,6 @@ class SensorDataProcessor {
 			log = "Z";
 			break;
 		}
-		extrema.add(points.get(0));
 		if (extrema.size() > 0) {
 			// Log.i(LOG_TAG, "FOUND " + extrema.size() + " PEAKS FOR " + log);
 		    
