@@ -1,6 +1,6 @@
 var ws = null;
-
-ws = new SockJS("http://localhost:8080/echo");
+var serverip = '192.168.1.150:8080';
+ws = new SockJS("http://"+serverip+"/echo");
 ws.onopen = function () {
     print('Connected');
 };
@@ -24,6 +24,7 @@ ws.onmessage = function (event) {
         $('#realtimepaintingarea').get(0).appendChild(currentline);
         currentline = $('#realtimepaintingarea polyline').eq($('#realtimepaintingarea polyline').length-1);
         currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':3});
+        currentline.attr('transform', 'scale(0.3)')
         pathtest = message + ' ';
         currentline.attr('points',pathtest);
     } else {

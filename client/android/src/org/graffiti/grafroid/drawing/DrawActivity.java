@@ -1,15 +1,5 @@
 package org.graffiti.grafroid.drawing;
 
-import java.util.List;
-
-import org.graffiti.grafroid.R;
-import org.graffiti.grafroid.sensor.SensorDataManager;
-import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
-import org.graffiti.grafroid.sensor.SensorPoint;
-
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContextSingleton;
-import roboguice.inject.InjectView;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -24,6 +14,15 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 import com.jjoe64.graphview.LineGraphView;
+import org.graffiti.grafroid.R;
+import org.graffiti.grafroid.sensor.SensorDataManager;
+import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
+import org.graffiti.grafroid.sensor.SensorPoint;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContextSingleton;
+import roboguice.inject.InjectView;
+
+import java.util.List;
 
 /**
  * Activity showing the graffiti drawing.

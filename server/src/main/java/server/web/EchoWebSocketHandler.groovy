@@ -1,4 +1,4 @@
-package server.web;
+package server.web
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,11 +9,11 @@ import org.springframework.web.socket.adapter.TextWebSocketHandlerAdapter
 
 class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 
-	private  static Logger log = LoggerFactory.getLogger(EchoWebSocketHandler.class);
+	private  static Logger log = LoggerFactory.getLogger(EchoWebSocketHandler.class)
 
 	@Override
 	void afterConnectionEstablished(WebSocketSession session) {
-		log.debug("Opened new session in instance " + this);
+		log.debug("Opened new session in instance " + this)
 	}
 
 	@Override
@@ -46,17 +46,17 @@ class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 			"444.5,176 446.5,303"
 		]
 		polylines.each {
-			String[] points = it.split(" ");
+			String[] points = it.split(" ")
 			points.each {
-				session.sendMessage(new TextMessage(it));
-				Thread.sleep(100);
+				session.sendMessage(new TextMessage(it))
+				Thread.sleep(100)
 			}
-			session.sendMessage(new TextMessage("stop"));
+			session.sendMessage(new TextMessage("stop"))
 		}
 	}
 
 	@Override
 	void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		session.close(CloseStatus.SERVER_ERROR);
+		session.close(CloseStatus.SERVER_ERROR)
 	}
 }

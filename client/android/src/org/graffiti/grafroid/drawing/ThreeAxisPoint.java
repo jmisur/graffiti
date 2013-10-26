@@ -1,5 +1,6 @@
 package org.graffiti.grafroid.drawing;
 
+import com.google.common.base.Objects;
 import org.graffiti.grafroid.sensor.SensorPoint;
 
 import com.google.common.base.Optional;
@@ -46,5 +47,14 @@ public class ThreeAxisPoint {
         }
 
         return timeStamp;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("X", getXPoint())
+                .add("Y", getYPoint())
+                .add("Z", getZPoint())
+                .toString();
     }
 }
