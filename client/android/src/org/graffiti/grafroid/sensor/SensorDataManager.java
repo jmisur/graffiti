@@ -1,27 +1,28 @@
 package org.graffiti.grafroid.sensor;
 
-import org.graffiti.grafroid.AccelerationMotionEventListener;
-
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import com.google.inject.Inject;
+import org.graffiti.grafroid.AccelerationMotionEventListener;
+import roboguice.inject.ContextSingleton;
 
+@ContextSingleton
 public class SensorDataManager implements SensorEventListener {
-	private SensorManager mSensorManager;
+
+    private final SensorManager mSensorManager;
+
 	private Sensor mLinearAccelerometerSensor;
 	private long mStartRecordTimestamp = -1;
 	private SensorDataProcessor mProcessor;
 
 	private AveragingFilter mFilter = new AveragingFilter(5);
 
-	public SensorDataManager(Context c) {
-		mSensorManager = (SensorManager) c
-				.getSystemService(Context.SENSOR_SERVICE);
-		mLinearAccelerometerSensor = mSensorManager
-				.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-
+    @Inject
+	public SensorDataManager(final SensorManager sensorManager) {
+        mSensorManager = sensorManager;
+		mLinearAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 	}
 
 	public void startRecording(AccelerationMotionEventListener listener) {

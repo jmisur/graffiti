@@ -4,9 +4,7 @@ import android.graphics.*;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
-import javax.annotation.concurrent.Immutable;
 import javax.inject.Named;
-import java.util.List;
 
 public class DrawingBitmapController {
 
@@ -32,7 +30,7 @@ public class DrawingBitmapController {
         drawPath.moveTo(100, 100);
 
         for (final ThreeAxisPoint threeAxisPoint : pathPoints) {
-            drawPath.rLineTo((float) threeAxisPoint.pX.getValue(), (float) threeAxisPoint.pY.getValue());
+            drawPath.rLineTo((float) threeAxisPoint.getXPoint().mValue, (float) threeAxisPoint.getYPoint().mValue);
         }
 
         draw(drawPath);
