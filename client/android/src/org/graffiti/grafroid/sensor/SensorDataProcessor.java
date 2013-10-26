@@ -36,9 +36,9 @@ class SensorDataProcessor {
 	public void process(float[] data, long time) {
 		mWindow.addData(data);
 		boolean[] moving = mWindow.isMoving();
-		// for (int i = 0; i < 3; i++) {
-		// Log.i(LOG_TAG, i + " = " + moving[i]);
-		// }
+		for (int i = 0; i < 3; i++) {
+			Log.i(LOG_TAG, i + " = " + moving[i]);
+		}
 		for (int i = 0; i < 3; i++) {
 
 			if (mIsMoving[i] != moving[i]) {

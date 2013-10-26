@@ -101,7 +101,7 @@ public class DebugActivity extends RoboActivity implements
 		mDebugContainer.addView(graphView);
 	}
 
-	private GraphViewData[] pointListToGraphArray(List<SensorPoint> points) {
+	public static GraphViewData[] pointListToGraphArray(List<SensorPoint> points) {
 		GraphViewData[] pointArray = new GraphViewData[points.size()];
 		for (int i = 0; i < points.size(); i++) {
 			SensorPoint p = points.get(i);

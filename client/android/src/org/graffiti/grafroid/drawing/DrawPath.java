@@ -1,13 +1,14 @@
 package org.graffiti.grafroid.drawing;
 
-import com.google.common.base.Optional;
+import java.util.List;
+
+import javax.inject.Singleton;
+
+import org.graffiti.grafroid.sensor.SensorPoint;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.graffiti.grafroid.sensor.SensorPoint;
-
-import javax.inject.Singleton;
-import java.util.List;
 
 @Singleton
 /*package*/ class DrawPath {
