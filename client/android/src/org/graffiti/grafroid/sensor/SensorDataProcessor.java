@@ -167,7 +167,7 @@ class SensorDataProcessor {
 			log = "Z";
 			break;
 		}
-		if (extrema.size() > 0) {
+		if (extrema.size() > 1) {
 			// Log.i(LOG_TAG, "FOUND " + extrema.size() + " PEAKS FOR " + log);
 		    
 			for (int i = 0; i < extrema.size() - 1; i++) {
