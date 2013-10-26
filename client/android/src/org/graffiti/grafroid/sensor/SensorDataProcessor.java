@@ -63,11 +63,24 @@ public class SensorDataProcessor {
 		}
 	}
 
-	private void findPeaks(List<Point> points, int i) {
+	private void findPeaks(List<Point> points, int index) {
 		ExtremaFinder finder = new ExtremaFinder(points);
 		List<Point> extrema = finder.getExtrema();
 		if (extrema.size() > 0) {
-			Log.i(LOG_TAG, i + " = " + extrema.size());
+			for (int i = 0; i < extrema.size() - 1; i++) {
+				Log.i(LOG_TAG, index + " = " + extrema.size());
+				switch (index) {
+				case 0:
+					mListener.onMotionDownX(extrema.get(i));
+					break;
+				case 1:
+					mListener.onMotionDownY(extrema.get(i));
+					break;
+				case 2:
+					mListener.onMotionDownZ(extrema.get(i));
+					break;
+				}
+			}
 		}
 
 	}
