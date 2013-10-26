@@ -15,7 +15,7 @@ class SensorDataProcessor {
 	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
-	SensorWindow mWindow = new SensorWindow(10);
+	SensorWindow mWindow = new SensorWindow(30);
 
 	private AccelerationMotionEventListener mListener;
 
@@ -88,10 +88,11 @@ class SensorDataProcessor {
 					mListener.onMotionDownZ(extrema.get(i));
 					break;
 				}
-				if (extrema.get(i).mValue<0){
-					Log.i(LOG_TAG, "DOWN "+ log);					
+				
+				if (extrema.get(i).mValue < 0) {
+					Log.i(LOG_TAG, "DOWN " + log);
 				} else {
-					Log.i(LOG_TAG, "UP "+ log);				
+					Log.i(LOG_TAG, "UP " + log);
 				}
 
 			}

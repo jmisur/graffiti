@@ -4,7 +4,7 @@ import android.util.Log;
 
 class SensorWindow {
 	private static final String LOG_TAG = SensorWindow.class.getSimpleName();
-	private static final double STD_DEV_THRESHOLD = 1;
+	private static final double STD_DEV_THRESHOLD = 4;
 	
 	private final static boolean sDebug = false;
 
