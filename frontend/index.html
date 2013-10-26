@@ -19,13 +19,99 @@
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
-
-
-
         <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
         <script type="text/javascript">
+        </script>
+
+
+
+
+
+
+
+
+
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+        <script>
+            var map;
+            var panorama;
+            var astorPlace = new google.maps.LatLng(40.729884, -73.990988);
+            var busStop = new google.maps.LatLng(40.729559678851025, -73.99074196815491);
+            var cafe = new google.maps.LatLng(40.730031233910694, -73.99142861366272);
+            var bank = new google.maps.LatLng(40.72968163306612, -73.9911389350891);
+
+            function initialize() {
+
+                // Set up the map
+                var mapOptions = {
+                    center: astorPlace,
+                    zoom: 18,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    streetViewControl: false
+                };
+                map = new google.maps.Map(document.getElementById('map-canvas'),
+                        mapOptions);
+
+                google.maps.event.addListener(map, 'dragend', function(evt) {
+                    // 3 seconds after the center of the map has changed, pan back to the
+                    // marker.
+                    //map.getZoom();
+
+                    console.log(map.getBounds().getNorthEast().lb);
+                    console.log(map.getBounds().getNorthEast().lb);
+                    console.log(map.getBounds().getSouthWest().lb);
+                    console.log(map.getBounds().getSouthWest().lb);
+                    console.log(map.getBounds());
+                });
+
+
+                // Setup the markers on the map
+                var cafeMarker = new google.maps.Marker({
+                    position: cafe,
+                    map: map,
+                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=cafe|FFFF00',
+                    title: 'Cafe'
+                });
+
+                var bankMarker = new google.maps.Marker({
+                    position: bank,
+                    map: map,
+                    icon: 'graffiti.png',
+                    title: 'Bank'
+                });
+
+                var busMarker = new google.maps.Marker({
+                    position: busStop,
+                    map: map,
+                    icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=bus|FFFF00',
+                    title: 'Bus Stop'
+                });
+
+                // We get the map's default panorama and set up some defaults.
+                // Note that we don't yet set it visible.
+                panorama = map.getStreetView();
+                panorama.setPosition(astorPlace);
+                panorama.setPov(/** @type {google.maps.StreetViewPov} */({
+                    heading: 265,
+                    pitch: 0
+                }));
+            }
+
+            function toggleStreetView() {
+                var toggle = panorama.getVisible();
+                if (toggle == false) {
+                    panorama.setVisible(true);
+                } else {
+                    panorama.setVisible(false);
+                }
+            }
+
+            google.maps.event.addDomListener(window, 'load', initialize);
 
         </script>
+
+
+
 
 
     </head>
@@ -61,39 +147,81 @@
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
         </div><!--/.navbar-collapse -->
       </div>
     </div>
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <!--<div class="jumbotron">
-      <div class="container">
-        <h1>Hello, world!</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-      </div>
-    </div>-->
-
-    <div class="container">
-      <!-- Example row of columns -->
+    <div class="container mt1">
         <div class="row">
             <div class="col-lg-12">
-                <input id="text"<input>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <ul class="nav nav-pills">
+                    <li class="active"><a href="#tabnearest" data-toggle="tab">Nearest</a></li>
+                    <li><a href="#tabnlive" data-toggle="tab">Live</a></li>
+                    <li><a href="#tabpopular" data-toggle="tab">Popular</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tabnearest">
+                        <h2>Nearest graffities</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Morbi leo risus</li>
+                            <li class="list-group-item">Porta ac consectetur ac</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                    </div>
+                    <div  class="tab-pane" id="tabnlive">
+                        <h2>Live graffities</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Morbi leo risus</li>
+                            <li class="list-group-item">Porta ac consectetur ac</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                    </div>
+                    <div  class="tab-pane" id="tabpopular">
+                        <h2>Most popular</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Morbi leo risus</li>
+                            <li class="list-group-item">Porta ac consectetur ac</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 ">
+                <div>
+                    <div class="col-lg-9 ">
+                        <input class="form-control input-lg" placeholder="search place" type="text" placeholder=".input-lg">
+                    </div>
+                    <div class="col-lg-3 ">
+                        <button type="button" class="btn btn-primary btn-lg">Search</button>
+                    </div>
+                </div>
+
+
+
+                <div id="map-canvas" class="map"></div>
+
+
+
+
+
+
+
+
+
+                <input id="text" />
                 <button id="send" onclick="send();">Send</button>
                 <textarea id="message" style="width: 300px; height: 300px;"></textarea>
+                <svg height="200" width="200" style="border:1px solid red" id="realtimepaintingarea" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-                <canvas ></canvas>
-                <svg id="realtimepaintingarea" xmlns="http://www.w3.org/2000/svg" version="1.1" height="190">
-                    <polyline points="" style="fill:none;stroke:black;stroke-width:3" />
                 </svg>
 
             </div>
