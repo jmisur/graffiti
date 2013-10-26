@@ -78,6 +78,7 @@ class SensorWindow {
 	}
 
 	public void reset() {
+	    mFull= false;
 		mMoving = false;
 		mValues.clear();
 	}
