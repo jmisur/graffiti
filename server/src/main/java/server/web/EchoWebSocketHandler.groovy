@@ -48,7 +48,8 @@ class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 		polylines.each {
 			String[] points = it.split(" ")
 			points.each {
-				session.sendMessage(new TextMessage(it))
+				String[] xy = it.split(",")
+				session.sendMessage(new TextMessage("${xy[0]} ${xy[1]}"))
 				Thread.sleep(100)
 			}
 			session.sendMessage(new TextMessage("stop"))
