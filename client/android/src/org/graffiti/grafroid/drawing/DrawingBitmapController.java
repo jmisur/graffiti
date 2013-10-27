@@ -36,14 +36,23 @@ public class DrawingBitmapController {
  drawPath.moveTo(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
                
         ThreeAxisPoint lastPoint = null;
+        float lastYMovement = 0;
+        float lastXMovement = 0;
         for (final ThreeAxisPoint threeAxisPoint : pathPoints) {
             final long timeDiff = (lastPoint == null) ? 0 : threeAxisPoint.getTimeStamp() - lastPoint.getTimeStamp();
             final double xValue = threeAxisPoint.getXPoint().mValue;
             final double yValue = threeAxisPoint.getYPoint().mValue;
             final float xMovement = (float)((double)timeDiff * xValue) / 10;
             final float yMovement = (float)((double)timeDiff * yValue) / 10;
+            
+            if (lastYMovement!=0){
+                final float x2 = (xMovement + lastXMovement) / 2;
+                final float y2 = (yMovement + lastYMovement) / 2;
+                //drawPath.rQuadTo(xMovement, yMovement, x2, y2);                
+            }
+            lastYMovement = yMovement;
+            lastXMovement = xMovement;
             drawPath.rLineTo(xMovement, yMovement);
-
             lastPoint = threeAxisPoint;
         }
         
