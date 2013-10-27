@@ -83,7 +83,7 @@ function stepMarker(livegraf, marker, image){
                      path: livegraf,
                      scale: 3/distance,
                      anchor: new google.maps.Point(0, 500),
-                     strokeWeight: 10
+                     strokeWeight: 5
                  });
             }
     }
