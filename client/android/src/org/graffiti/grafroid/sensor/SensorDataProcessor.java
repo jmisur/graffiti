@@ -151,7 +151,7 @@ class SensorDataProcessor {
 		List<SensorPoint> e = finder.getExtrema();
 		List<SensorPoint> extrema = new ArrayList<SensorPoint>();
 	    extrema.add(points.get(0));
-	    extrema.addAll(e);
+	    extrema.addAll(e.subList(0, e.size()-1));
 
 		String log = "";
 		if (mDebugListener.isPresent()) {
@@ -170,11 +170,10 @@ class SensorDataProcessor {
 			break;
 		}
 	    extrema.add(points.get(points.size()-1));
-
-		if (extrema.size() > 2) {
+		if (extrema.size() > 1) {
 			// Log.i(LOG_TAG, "FOUND " + extrema.size() + " PEAKS FOR " + log);
 		    
-			for (int i = 0; i < extrema.size() - 1; i++) {
+			for (int i = 0; i < extrema.size(); i++) {
 				switch (index) {
 				case 0:
 					log = "X";
