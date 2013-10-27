@@ -1,17 +1,17 @@
 package org.graffiti.grafroid.sensor;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import android.util.Log;
-
 class SensorWindow {
     private static final String     LOG_TAG         = SensorWindow.class.getSimpleName();
     private static final double     START_THRESHOLD = 3;
     private static final double     STOP_THRESHOLD  = 1;
-    
+
     private final static boolean    sDebug          = false;
     
     private final int               mStackSize;
