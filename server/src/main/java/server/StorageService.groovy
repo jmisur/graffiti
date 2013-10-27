@@ -3,6 +3,7 @@ package server
 import javax.annotation.PostConstruct
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -47,7 +48,7 @@ class StorageService {
 	}
 
 	List<GraffitiData> find(String lat0, String long0, String lat1, String long1) {
-		repo.findByLocWithin( new Box( new Point(lat0 as double, long0 as double), new Point(lat1 as double,long1 as double)), new Sort(Direction.DESC, "timestamp") )
+		repo.findByLocWithin( new Box( new Point(lat0 as double, long0 as double), new Point(lat1 as double,long1 as double)), new PageRequest(0, 50, new Sort(Direction.DESC, "timestamp")) )
 	}
 
 	List<GraffitiData> popular() {
