@@ -11,16 +11,18 @@ import android.util.Log;
 import com.google.common.base.Optional;
 
 class SensorDataProcessor {
-	private final static String LOG_TAG = SensorDataProcessor.class
+	private static final int SENSOR_WINDOW_WIDTH = 20;
+
+    private final static String LOG_TAG = SensorDataProcessor.class
 			.getSimpleName();
 
 	private List<SensorPoint> mXPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
-	SensorWindow mXWindow = new SensorWindow(40);
-	SensorWindow mYWindow = new SensorWindow(40);
-	SensorWindow mZWindow = new SensorWindow(40);
+	SensorWindow mXWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
+	SensorWindow mYWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
+	SensorWindow mZWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
 
 	private AccelerationMotionEventListener mListener;
 	private Optional<DebugDataListener> mDebugListener = Optional.absent();
