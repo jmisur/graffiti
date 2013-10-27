@@ -11,7 +11,7 @@ import android.util.Log;
 import com.google.common.base.Optional;
 
 class SensorDataProcessor {
-	private static final int SENSOR_WINDOW_WIDTH = 20;
+	private static final int SENSOR_WINDOW_WIDTH = 30;
 
     private final static String LOG_TAG = SensorDataProcessor.class
 			.getSimpleName();
@@ -151,8 +151,8 @@ class SensorDataProcessor {
 		List<SensorPoint> e = finder.getExtrema();
 		List<SensorPoint> extrema = new ArrayList<SensorPoint>();
 	    extrema.add(points.get(0));
-	    extrema.addAll(e.subList(0, e.size()-1));
-        extrema.add(points.get(points.size()-1));
+	    extrema.addAll(e);
+	    extrema.get(extrema.size()-1).mValue=0;
 
 		String log = "";
 		if (mDebugListener.isPresent()) {
