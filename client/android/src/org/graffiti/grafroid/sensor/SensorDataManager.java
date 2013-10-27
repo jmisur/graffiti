@@ -40,6 +40,7 @@ public class SensorDataManager implements SensorEventListener {
 	public void stopRecording() {
 		mSensorManager.unregisterListener(this);
 		mProcessor.stop();
+		mStartRecordTimestamp =-1;
 	}
 
 	public interface DebugDataListener {
