@@ -39,7 +39,7 @@ class LiveService {
 	List<GraffitiData> getLives(){
 		[
 			new GraffitiData(id: '1', user: "anonymous", description: "N/A 1", loc: [52.506893, 13.436636]),
-			new GraffitiData(id: '2', user: "anonymous", description: "N/A 2", loc: [52.506893, 13.436636])
+			new GraffitiData(id: '2', user: "anonymous", description: "N/A 2", loc: [52.506853, 13.436696])
 		]
 	}
 
