@@ -43,12 +43,15 @@ ws.onmessage = function (event) {
 };
 
 function stepMarker(livegraf, marker, image){
-    console.log(livegraf);
-    console.log(marker);
-    console.log(image);
+    //console.log(livegraf);
+//    console.log(marker);
+//    console.log(image);
     
     if(!marker){
         marker = currentMarker;
+    }
+    if (!image) {
+    	image = marker.getIcon();
     }
     if (!livegraf) {
     	livegraf = marker.getIcon().path;
@@ -58,13 +61,18 @@ function stepMarker(livegraf, marker, image){
      var panorama = marker.getMap().getStreetView();
 
     if(panorama.getVisible()) {
-    		 var distance = google.maps.geometry.spherical.computeDistanceBetween(panorama.getPosition(), marker.getPosition());
-            if(distance==0)distance = 10;
+    		var distance = google.maps.geometry.spherical.computeDistanceBetween(panorama.getPosition(), marker.getPosition());
+            if(distance==0) distance = 10;
             if(image){
-                console.log('image gefunden');
-                marker.setIcon(image);
+//                console.log('image gefunden');
+                marker.setIcon({
+                    url: image,
+                    scaledSize: new google.maps.Size(300*3/distance, 300*3/distance),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(0, 400/Math.sqrt(distance))
+                  });
             }else{
-                console.log('path gefudnen');
+//                console.log('path gefudnen');
                 marker.setIcon({
                      path: livegraf,
                      scale: 3/distance,

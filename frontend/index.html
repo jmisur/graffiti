@@ -129,7 +129,7 @@
 						}
 					}
                     var colors = ['blue','green','orange','pink'];
-                    console.log(item.image);
+                    //console.log(item.image);
                     var img
                     if (item.image == 'true') {
                     	img = '<img width="230px" height="230px" src="http://'+serverip+'/image/' + item.id + '"></img>'
@@ -164,7 +164,7 @@
                              }
                          });
                     	
-	                    console.log(currentId);
+	                    //console.log(currentId);
 	                    //map.setCenter(marker.getPosition());
 	                    panorama.setPosition(marker.getPosition());
 
@@ -196,10 +196,10 @@
                         $('#tabnearest li, #tabpopular li').each(function(){
                             //if($(this).data('marker')==currentMarker){
                             	if ($(this).data('image') == 'true') {
-                            		console.log('http://'+serverip+'/image/' + $(this).data('_id'));
-                                	stepMarker($(this).data('streetdata'), $(this).data('marker'), 'http://'+serverip+'/image/' + $(this).data('_id'));
+                            		//console.log('http://'+serverip+'/image/' + $(this).data('_id'));
+                                	stepMarker(null, $(this).data('marker'), 'http://'+serverip+'/image/' + $(this).data('_id'));
                             	} else {
-                            		console.log("NOOOOPE");
+                            		//console.log("NOOOOPE");
                             		stepMarker($(this).data('streetdata'), $(this).data('marker'));
                             	}
                             //}
