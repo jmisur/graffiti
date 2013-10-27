@@ -1,20 +1,5 @@
 package org.graffiti.grafroid.drawing;
 
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.graffiti.grafroid.R;
-import org.graffiti.grafroid.sensor.SensorDataManager;
-import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
-import org.graffiti.grafroid.sensor.SensorPoint;
-
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContextSingleton;
-import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +16,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.jjoe64.graphview.GraphView;
@@ -39,6 +23,20 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 import com.jjoe64.graphview.LineGraphView;
+import org.graffiti.grafroid.AccelerationMotionEventListener;
+import org.graffiti.grafroid.R;
+import org.graffiti.grafroid.sensor.SensorDataManager;
+import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
+import org.graffiti.grafroid.sensor.SensorPoint;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContextSingleton;
+import roboguice.inject.InjectView;
+
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Activity showing the graffiti drawing.
@@ -135,40 +133,11 @@ public class DrawActivity extends RoboActivity {
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver);
     }
-    
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//                mDrawingListener.stopRecording();
-//                mRecording = false;
-//                break;
-//        }
-//        
-//        return true;
-//        
-//    };
-//    
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//                if (!mRecording) {
-//                    mRecording = true;
-//                    mDrawingListener.startRecording();
-//                }
-//                break;
-//        }
-//        
-//        return true;
-//    }
-    
+
     @ContextSingleton
-    private static class DrawingControlViewListener implements DebugDataListener {
+    private static class DrawingControlViewListener implements DebugDataListener, AccelerationMotionEventListener {
         @InjectView(R.id.drawingImage)
         private ImageView               mDrawingImage;
-        
         
         @Inject
         private DrawingEventHandler     mDrawingEventHandler;
@@ -182,19 +151,18 @@ public class DrawActivity extends RoboActivity {
         private LinearLayout            mDebugContainerX;
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
-                
+
         void startRecording() {
             mPath.clear();
-            mSensorDataManager.startRecording(mDrawingEventHandler);
+            drawCurrentPath();
+            mSensorDataManager.startRecording(this);
             mSensorDataManager.setDebugDataListener(this);
-            
         }
         
         public void stopRecording() {
             mSensorDataManager.stopRecording();
-            drawCurrentPath();
-            mDrawingImage.invalidate();
         }
+
         public void clearImage(){
             mPath.clear();
             drawCurrentPath();
@@ -203,7 +171,10 @@ public class DrawActivity extends RoboActivity {
         
         private void drawCurrentPath() {
             final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
-            mBitmapController.render(currentPath, mDrawingImage);
+            final Bitmap bitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
+            final float startX = bitmap.getWidth() / 2;
+            final float startY = bitmap.getHeight() / 2;
+            mBitmapController.render(currentPath, startX, startY, bitmap, mDrawingImage);
         }
         
         @Override
@@ -227,6 +198,48 @@ public class DrawActivity extends RoboActivity {
             graphView.setManualYAxisBounds(25, -25);
             container.removeAllViews();
             container.addView(graphView);
+        }
+
+        @Override
+        public void onMotionDownX(final SensorPoint p) {
+            final ThreeAxisPoint xThreePoint = new ThreeAxisPoint(p, null, null);
+            mPath.addPoint(xThreePoint);
+        }
+
+        @Override
+        public void onMotionDownY(final SensorPoint p) {
+            final ThreeAxisPoint yThreePoint = new ThreeAxisPoint(null, p, null);
+            mPath.addPoint(yThreePoint);
+        }
+
+        @Override
+        public void onMotionDownZ(final SensorPoint p) {
+            final ThreeAxisPoint zThreePoint = new ThreeAxisPoint(null, null, p);
+            mPath.addPoint(zThreePoint);
+        }
+
+        @Override
+        public void onMotionStopX(long timeStamp) {
+            final ThreeAxisPoint xThreePoint = new ThreeAxisPoint(new SensorPoint(timeStamp, 0), null, null);
+            mPath.addPoint(xThreePoint);
+        }
+
+        @Override
+        public void onMotionStopY(long timeStamp) {
+            final ThreeAxisPoint yThreePoint = new ThreeAxisPoint(null, new SensorPoint(timeStamp, 0), null);
+             mPath.addPoint(yThreePoint);
+        }
+
+        @Override
+        public void onMotionStopZ(long timeStamp) {
+            final ThreeAxisPoint zThreePoint = new ThreeAxisPoint(null, null, new SensorPoint(timeStamp, 0));
+            mPath.addPoint(zThreePoint);
+        }
+
+        @Override
+        public void onMotionTotalStop() {
+            drawCurrentPath();
+            mDrawingImage.invalidate();
         }
     }
 }

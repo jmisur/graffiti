@@ -28,13 +28,13 @@ public class DrawingBitmapController {
         drawingCanvas.drawPath(drawPath, outerPencil);
         drawingCanvas.drawPath(drawPath, pencil);
     }
-    
-    private void draw(final Bitmap bitmap, final ImmutableList<ThreeAxisPoint> pathPoints) {
+
+    private void draw(final Bitmap bitmap, final float startX, final float startY, final ImmutableList<ThreeAxisPoint> pathPoints) {
         Preconditions.checkNotNull(bitmap);
         
         final Path drawPath = new Path();
- drawPath.moveTo(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-               
+        drawPath.moveTo(startX, startY);
+
         ThreeAxisPoint lastPoint = null;
         float lastYMovement = 0;
         float lastXMovement = 0;
@@ -58,14 +58,13 @@ public class DrawingBitmapController {
         
         draw(bitmap, drawPath);
     }
-    
-    public void render(final List<ThreeAxisPoint> pathPoints, final ImageView view) {
+
+    public void render(final List<ThreeAxisPoint> pathPoints, final float startX, final float startY, final Bitmap bitmap, final ImageView view) {
         Preconditions.checkNotNull(view);
-        
-        final Bitmap drawingBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+
         final ImmutableList<ThreeAxisPoint> adjustedPoints = adjustForDeviceOrientation(pathPoints);
-        draw(drawingBitmap, adjustedPoints);
-        view.setImageBitmap(drawingBitmap);
+        draw(bitmap, startX, startY, adjustedPoints);
+        view.setImageBitmap(bitmap);
     }
     
     private ImmutableList<ThreeAxisPoint> adjustForDeviceOrientation(final List<ThreeAxisPoint> sensorPoints) { //XXX allow parameterized orientation
