@@ -35,6 +35,8 @@ class SensorDataProcessor {
     }
     
     private boolean[] mIsMoving = new boolean[3];
+
+    private boolean mIsTotalStop;
     
     public void process(float[] data, long time) {
         mXWindow.addData(data[0], time);
@@ -72,6 +74,7 @@ class SensorDataProcessor {
                     Log.i(LOG_TAG, "started " + i);
                     // motion started
                     mIsMoving[i] = true;
+                    mIsTotalStop = false;
                     // add inital points
                     switch (i) {
                         case 0:
@@ -103,7 +106,8 @@ class SensorDataProcessor {
             }
         }
         
-        if (!mIsMoving[0] && !mIsMoving[1] && !mIsMoving[2]) {
+        if (!mIsTotalStop && (!mIsMoving[0] && !mIsMoving[1] && !mIsMoving[2])) {
+            mIsTotalStop = true;
             findPeaks(mXPoints, 0);
             mXPoints.clear();
             findPeaks(mYPoints, 1);
