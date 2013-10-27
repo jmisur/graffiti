@@ -14,4 +14,6 @@ class GraffitiData {
 	Integer width
 	double[] loc
 	List<String> data
+	Date timestamp
+	Double popularity
 }
