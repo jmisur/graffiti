@@ -1,9 +1,13 @@
 package org.graffiti.grafroid.sensor;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Locale;
 
 public class SensorPoint {
+    @SerializedName("timestamp")
     public long   mTimeStamp;
+    @SerializedName("value")
     public double mValue;
     
     public SensorPoint(final long timeStamp, final double value) {

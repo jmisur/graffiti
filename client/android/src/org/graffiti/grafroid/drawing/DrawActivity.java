@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
@@ -152,6 +154,13 @@ public class DrawActivity extends RoboActivity {
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
 
+        @Inject private Context context;
+
+        final Gson mGson;
+        {
+            mGson = new GsonBuilder().create();
+        }
+
         void startRecording() {
             mPath.clear();
             drawCurrentPath();
@@ -176,7 +185,17 @@ public class DrawActivity extends RoboActivity {
             final float startY = bitmap.getHeight() / 2;
             mBitmapController.render(currentPath, startX, startY, bitmap, mDrawingImage);
         }
-        
+
+        private void uploadCurrentPath() {
+            final Intent serviceIntent = new Intent(context, PathUploadService.class);
+
+            final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
+
+            final String pathJson = mGson.toJson(currentPath);
+            serviceIntent.putExtra(PathUploadService.EXTRA_DRAWING_PATH, pathJson);
+            context.startService(serviceIntent);
+        }
+
         @Override
         public void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema, int index) {
             if (index == 1) {
@@ -240,6 +259,7 @@ public class DrawActivity extends RoboActivity {
         public void onMotionTotalStop() {
             drawCurrentPath();
             mDrawingImage.invalidate();
+            uploadCurrentPath();
         }
     }
 }

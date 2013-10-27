@@ -1,20 +1,13 @@
 package org.graffiti.grafroid.drawing;
 
-import java.util.List;
-
-import org.graffiti.grafroid.sensor.SensorPoint;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import android.widget.ImageView;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.graffiti.grafroid.sensor.SensorPoint;
+
+import java.util.List;
 
 public class DrawingBitmapController {
     
