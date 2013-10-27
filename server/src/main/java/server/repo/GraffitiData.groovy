@@ -13,5 +13,5 @@ class GraffitiData {
 	Integer height
 	Integer width
 	double[] loc
-	String[] data
+	List<String> data
 }

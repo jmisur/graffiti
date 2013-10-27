@@ -7,6 +7,7 @@ ws.onopen = function () {
 
 
 var pathtest = null;
+var livegraf = '';
 var currentline = null;
 ws.onmessage = function (event) {
     print('Received: ' + event.data);
@@ -26,15 +27,41 @@ ws.onmessage = function (event) {
         currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':3});
         currentline.attr('transform', 'scale(0.3)')
         pathtest = message + ' ';
+        livegraf += 'M ' + message + ' ';
         currentline.attr('points',pathtest);
+
+        stepMarker(livegraf);
     } else {
         pathtest += message +' ';
+        livegraf += 'L ' + message + ' ';
         currentline.attr('points',pathtest);
-        //$('#realtimepaintingarea').attr('preserveAspectRatio', 'xMinYMin meet')
-        //$('#realtimepaintingarea').attr('viewBox', '0 0 200 200')
+        
+        stepMarker(livegraf);
     }
-    console.log(message);
+    //console.log(message);
 };
+
+function stepMarker(livegraf) {
+		if (livegraf === 'undefined') {
+			livegraf = marker.getIcon().getPath();
+		}
+    	var marker = currentMarker;
+    	 var panorama = marker.getMap().getStreetView();
+    	 if (panorama.getVisible()) {
+    		 var distance = google.maps.geometry.spherical.computeDistanceBetween(panorama.getPosition(), marker.getPosition());
+//    		 console.log(distance);
+    		 marker.setIcon({
+    			 path: livegraf,
+    			 scale: 3/distance,
+    			 anchor: new google.maps.Point(0, 500),
+    			 strokeWeight: 10
+    		 });
+    	 }
+}
+
+function recalculateDistance() {
+	 stepMarker();
+}
 
 ws.onclose = function () {
     print('Disconnected');
