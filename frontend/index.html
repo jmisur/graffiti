@@ -35,6 +35,7 @@
         <script>
             var map;
             var panorama;
+            var currentMarker;
 
 
             function initialize() {
@@ -99,6 +100,7 @@
                     });
                     listitem.data('marker',marker);
                     google.maps.event.addListener(marker, 'click', function() {
+                    	currentMarker = marker;
                     //map.setCenter(marker.getPosition());
                     panorama.setPosition(marker.getPosition());
 
@@ -167,8 +169,13 @@
                         panorama.setVisible(false);
                     }
                 }
+                
                 google.maps.event.addListenerOnce(map, 'idle', function(){
                     cardchange();
+                });
+                
+                google.maps.event.addListener(panorama, 'position_changed', function() {
+                	recalculateDistance();
                 });
             }
 

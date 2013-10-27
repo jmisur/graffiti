@@ -42,23 +42,25 @@ ws.onmessage = function (event) {
 };
 
 function stepMarker(livegraf) {
-    $('#tabnearest li, #tabnlive li, #tabpopular li').each(function(){
-    	var marker = $(this).data('marker');
+		if (livegraf === 'undefined') {
+			livegraf = marker.getIcon().getPath();
+		}
+    	var marker = currentMarker;
     	 var panorama = marker.getMap().getStreetView();
     	 if (panorama.getVisible()) {
-    		 var panPos = panorama.getPosition();
-    		 var markerPos = marker.getPosition();
-    		 var xdelta = Math.abs(panPos.lat() - markerPos.lat());
-    		 var ydelta = Math.abs(panPos.lng() - markerPos.lng());
-    		 var distance = Math.sqrt(Math.pow(xdelta, 2) + Math.pow(ydelta, 2)); 
-    		 console.log(distance);
+    		 var distance = google.maps.geometry.spherical.computeDistanceBetween(panorama.getPosition(), marker.getPosition());
+//    		 console.log(distance);
     		 marker.setIcon({
     			 path: livegraf,
-    			 scale: 1 - 100 * distance,
+    			 scale: 3/distance,
+    			 anchor: new google.maps.Point(0, 500),
     			 strokeWeight: 10
     		 });
     	 }
-    });	
+}
+
+function recalculateDistance() {
+	 stepMarker();
 }
 
 ws.onclose = function () {
