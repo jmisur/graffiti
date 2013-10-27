@@ -11,13 +11,16 @@ import org.graffiti.grafroid.sensor.SensorPoint;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContextSingleton;
 import roboguice.inject.InjectView;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -40,26 +43,47 @@ public class DrawActivity extends RoboActivity {
     private ImageView                  mDrawingImage;
     
     @InjectView(R.id.upload_button)
-    private ImageView mSaveButton;
-
+    private ImageView                  mSaveButton;
+    
     @Inject
     private DrawingControlViewListener mDrawingListener;
     
     private boolean                    mRecording;
     
+    private BroadcastReceiver          mBroadcastReceiver;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawing);
+        
+        mBroadcastReceiver = new BroadcastReceiver() {
+            
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mSaveButton.setVisibility(View.VISIBLE);
+            }
+            
+        };
+        registerReceiver(mBroadcastReceiver, new IntentFilter(ImageUploadService.ACTION_UPLOAD_COMPLETED));
+        
         mSaveButton.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                
-                // TODO Auto-generated method stub
-                
+                //start service to extract language file
+                Intent serviceIntent = new Intent(DrawActivity.this, ImageUploadService.class);
+                serviceIntent.putExtra(ImageUploadService.EXTRA_PAYLOAD, "{\"data\":hello jurai}");
+                DrawActivity.this.startService(serviceIntent);
+                mSaveButton.setVisibility(View.INVISIBLE);
             }
         });
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mBroadcastReceiver);
     }
     
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -67,7 +91,7 @@ public class DrawActivity extends RoboActivity {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 mDrawingListener.stopRecording();
-                mRecording = false;                
+                mRecording = false;
                 break;
         }
         
@@ -108,9 +132,7 @@ public class DrawActivity extends RoboActivity {
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
         
-
-        
-        List<ThreeAxisPoint> mAccumulatedPoints = new ArrayList<ThreeAxisPoint>();
+        List<ThreeAxisPoint>            mAccumulatedPoints = new ArrayList<ThreeAxisPoint>();
         
         void startRecording() {
             mPath.clear();
@@ -130,7 +152,7 @@ public class DrawActivity extends RoboActivity {
             mAccumulatedPoints.addAll(currentPath);
             mBitmapController.render(currentPath, mDrawingImage);
         }
-
+        
         @Override
         public void onDebugData(List<SensorPoint> points, List<SensorPoint> extrema, int index) {
             if (index == 1) {

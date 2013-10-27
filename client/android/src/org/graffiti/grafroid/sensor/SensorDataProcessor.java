@@ -188,6 +188,8 @@ class SensorDataProcessor {
 					mListener.onMotionDownZ(extrema.get(i));
 					break;
 				}
+                Log.i(LOG_TAG, "sent "+log+" :  "+ extrema.get(i));
+
 
 				// if (extrema.get(i).mValue < 0) {
 				// Log.i(LOG_TAG, "DOWN " + log);
