@@ -1,7 +1,6 @@
 package org.graffiti.grafroid.drawing;
 
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import org.graffiti.grafroid.R;
 import org.graffiti.grafroid.sensor.SensorDataManager;
-import org.graffiti.grafroid.sensor.SensorDataManagerInterface;
 import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
 import org.graffiti.grafroid.sensor.SensorPoint;
 
@@ -22,11 +20,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -185,11 +182,9 @@ public class DrawActivity extends RoboActivity {
         private LinearLayout            mDebugContainerX;
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
-        
-        List<ThreeAxisPoint>            mAccumulatedPoints = new ArrayList<ThreeAxisPoint>();
-        
+                
         void startRecording() {
-            mPath.clear();
+            //mPath.clear();
             mSensorDataManager.startRecording(mDrawingEventHandler);
             mSensorDataManager.setDebugDataListener(this);
             
@@ -201,15 +196,14 @@ public class DrawActivity extends RoboActivity {
             mDrawingImage.invalidate();
         }
         public void clearImage(){
-            mAccumulatedPoints.clear();
+            mPath.clear();
             drawCurrentPath();
             mDrawingImage.invalidate();
         }
         
         private void drawCurrentPath() {
             final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
-            mAccumulatedPoints.addAll(currentPath);
-            mBitmapController.render(mAccumulatedPoints, mDrawingImage);
+            mBitmapController.render(currentPath, mDrawingImage);
         }
         
         @Override

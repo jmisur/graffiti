@@ -7,12 +7,13 @@ import org.graffiti.grafroid.AccelerationMotionEventListener;
 import roboguice.inject.ContextSingleton;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.google.inject.Inject;
 
 @ContextSingleton
-public class SensorDataManager implements SensorDataManagerInterface {
+public class SensorDataManager implements SensorEventListener {
     
     private final SensorManager mSensorManager;
     
