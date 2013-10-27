@@ -36,4 +36,13 @@ class FrontendController {
 		println data
 		new FindResponse(data: data.collect {new GraffitiResponse(it)})
 	}
+
+	@RequestMapping(value = "/live", method=RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	FindResponse live(HttpServletResponse response ){
+		response.addHeader("Access-Control-Allow-Origin", "*")
+		List<GraffitiData> data = storage.live()
+		println data
+		new FindResponse(data: data.collect {new GraffitiResponse(it)})
+	}
 }

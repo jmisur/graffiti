@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection="graffiti")
 class GraffitiData {
 
+	String id
 	String user
 	String description
 	Integer height

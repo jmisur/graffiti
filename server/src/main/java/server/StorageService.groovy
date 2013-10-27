@@ -22,6 +22,9 @@ class StorageService {
 	GraffitiRepository repo
 
 	@Autowired
+	LiveService live
+
+	@Autowired
 	MongoTemplate template
 
 	@PostConstruct
@@ -46,5 +49,9 @@ class StorageService {
 
 	List<GraffitiData> popular() {
 		repo.findAll(new Sort(Direction.DESC, "popularity"))
+	}
+
+	List<GraffitiData> live() {
+		live.getLives()
 	}
 }
