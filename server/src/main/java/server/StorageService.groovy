@@ -52,7 +52,7 @@ class StorageService {
 	}
 
 	List<GraffitiData> popular() {
-		repo.findAll(new Sort(Direction.DESC, "popularity"))
+		repo.findAll(new PageRequest(0, 5, Direction.DESC, "popularity")).getContent()
 	}
 
 	List<GraffitiData> live() {

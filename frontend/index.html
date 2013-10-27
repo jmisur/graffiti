@@ -193,18 +193,24 @@
 
                     });
                     google.maps.event.addListener(panorama, 'visible_changed', function() {
-                        $('#tabnearest li, #tabpopular li').each(function(){
-                            //if($(this).data('marker')==currentMarker){
-                            	if ($(this).data('image') == 'true') {
-                            		//console.log('http://'+serverip+'/image/' + $(this).data('_id'));
-                                	stepMarker(null, $(this).data('marker'), 'http://'+serverip+'/image/' + $(this).data('_id'));
-                            	} else {
-                            		//console.log("NOOOOPE");
-                            		stepMarker($(this).data('streetdata'), $(this).data('marker'));
-                            	}
-                            //}
-                        });
-                        if(currenttype=='live')send();
+                    	if (!panorama.getVisible()) {
+                    		//console.log("PANORAMA GET VISIBLE TRUE");
+                    		cardchange();
+                    	} else {
+                    		//console.log("PANORAMA GET VISIBLE FALSE");
+	                        $('#tabnearest li, #tabpopular li').each(function(){
+	                            //if($(this).data('marker')==currentMarker){
+	                            	if ($(this).data('image') == 'true') {
+	                            		//console.log('http://'+serverip+'/image/' + $(this).data('_id'));
+	                                	stepMarker(null, $(this).data('marker'), 'http://'+serverip+'/image/' + $(this).data('_id'));
+	                            	} else {
+	                            		//console.log("NOOOOPE");
+	                            		stepMarker($(this).data('streetdata'), $(this).data('marker'));
+	                            	}
+	                            //}
+	                        });
+	                        if(currenttype=='live')send();
+                    	}
                     });
 
 
