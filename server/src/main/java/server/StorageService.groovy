@@ -27,6 +27,9 @@ class StorageService {
 	@Autowired
 	MongoTemplate template
 
+	def randomLoc = [52.506387, 13.437279]
+	//	             52.506369,13.437312
+
 	@PostConstruct
 	void setup() {
 		template.indexOps(GraffitiData.class).ensureIndex( new GeospatialIndex("loc") )
@@ -53,5 +56,22 @@ class StorageService {
 
 	List<GraffitiData> live() {
 		live.getLives()
+	}
+
+	void saveImage(byte[] bytes) {
+		println bytes
+		randomLoc[0] = randomLoc[0]-0.000020
+		randomLoc[1] = randomLoc[1]+0.000030
+		def entity = new GraffitiData(user: "anonymous", description: "random graffiti", loc: [
+			randomLoc[0],
+			randomLoc[1]
+		], timestamp: new Date(), popularity: 2.5, image: bytes)
+		println entity
+		repo.save(entity)
+	}
+
+	byte[] getImage(String id) {
+		def entity = repo.findOne(id)
+		entity?.image
 	}
 }

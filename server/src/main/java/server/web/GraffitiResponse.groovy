@@ -15,6 +15,7 @@ class GraffitiResponse {
 	String height
 	String width
 	String popularity
+	String image
 
 	GraffitiResponse(GraffitiData data) {
 		id = data.id
@@ -27,5 +28,6 @@ class GraffitiResponse {
 		height = data.height
 		width = data.width
 		popularity = data.popularity
+		image = data.image ? true : false
 	}
 }

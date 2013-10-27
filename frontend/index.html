@@ -129,8 +129,16 @@
 						}
 					}
                     var colors = ['blue','green','orange','pink'];
+                    console.log(item.image);
+                    var img
+                    if (item.image == 'true') {
+                    	img = '<img width="230px" height="230px" src="/image/' + item.id + '"></img>' 
+                    } else { 
+                    	img = '<svg  style="height:'+Math.floor(zoomfactor*item.height)+'px" >'+lines +'</svg>';
+                	}
                     var listitem = $('<li class="list-group-item">' +
-                    		'<h3><img class="previewmarker" src="img/pinpoint_'+colors[(no%4)]+'_50x70px.png" /> '+item.description+'</h3>' +item.user+'<svg  style="height:'+Math.floor(zoomfactor*item.height)+'px" >'+lines +'</svg></li>');
+                    		'<h3><img class="previewmarker" src="img/pinpoint_'+colors[(no%4)]+'_50x70px.png" /> '+item.description+'</h3>' +item.user+
+                    		img +'</li>');
                     $(list+' ul').append(listitem);
                     var marker = new google.maps.Marker({
                         position: new google.maps.LatLng(item.latitude, item.longitude),
@@ -142,6 +150,7 @@
                     listitem.data('marker',marker);
                     listitem.data('_id', item.id);
                     listitem.data('streetdata',item.streetdata);
+                    listitem.data('image', item.image);
                     $('.previewmarker',listitem).click(function(){
                         map.setCenter($(this).parents('li').data('marker').getPosition());
                     });
@@ -186,7 +195,13 @@
                     google.maps.event.addListener(panorama, 'visible_changed', function() {
                         $('#tabnearest li, #tabpopular li').each(function(){
                             //if($(this).data('marker')==currentMarker){
-                                stepMarker($(this).data('streetdata'), $(this).data('marker'));
+                            	if ($(this).data('image') == 'true') {
+                            		console.log('/image/' + $(this).data('_id'));
+                                	stepMarker($(this).data('streetdata'), $(this).data('marker'), '/image/' + $(this).data('_id'));
+                            	} else {
+                            		console.log("NOOOOPE");
+                            		stepMarker($(this).data('streetdata'), $(this).data('marker'));
+                            	}
                             //}
                         });
                         send();
