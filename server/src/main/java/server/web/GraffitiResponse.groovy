@@ -5,6 +5,7 @@ import server.repo.GraffitiData
 
 class GraffitiResponse {
 
+	String id
 	String user
 	String description
 	String[] data
@@ -16,6 +17,7 @@ class GraffitiResponse {
 	String popularity
 
 	GraffitiResponse(GraffitiData data) {
+		id = data.id
 		user = data.user
 		description = data.description
 		this.data = data.data

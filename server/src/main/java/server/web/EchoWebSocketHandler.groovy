@@ -24,7 +24,7 @@ class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 
 	@Override
 	void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		live.stream(session)
+		live.stream(session, message)
 	}
 
 	@Override

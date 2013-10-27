@@ -36,6 +36,7 @@
             var map;
             var panorama;
             var currentMarker;
+            var currentId;
 
 
             function initialize() {
@@ -83,7 +84,7 @@
                         url:"http://192.168.1.150:8080/find?lat0="+lat1+"&long0="+lng1+"&lat1="+lat2+"&long1="+lng2,
                         dataType: 'json',
                         success:function(json){
-                            console.log(json);
+                            //console.log(json);
                             clear_lists();
                             var c = json.data.length;
                             for(var i=0;i<c;i++){
@@ -98,7 +99,7 @@
                 google.maps.event.addListener(map, 'zoom_changed', cardchange);
 
                 function clear_lists(){
-                    $('#tabnearest li, #tabnlive li, #tabpopular li').each(function(){
+                    $('#tabnearest li, #tablive li, #tabpopular li').each(function(){
                         $(this).data('marker').setMap(null);
                         $(this).remove();
                     })
@@ -108,8 +109,10 @@
                 function add_item(item, list, no){
 					var lines = '';
                     var zoomfactor = 230/item.width;
-					for (var i = 0; i < item.data.length; i++) {
-						 lines += '<polyline points="'+item.data[i]+'" style="fill:none;stroke:black;stroke-width:5" transform="scale('+zoomfactor+')"/>';
+                    if (item.data){
+						for (var i = 0; i < item.data.length; i++) {
+							 lines += '<polyline points="'+item.data[i]+'" style="fill:none;stroke:black;stroke-width:5" transform="scale('+zoomfactor+')"/>';
+						}
 					}
                     var colors = ['blue','green','orange','pink'];
                     var listitem = $('<li class="list-group-item">' +
@@ -123,11 +126,20 @@
                         title: item.description
                     });
                     listitem.data('marker',marker);
+                    listitem.data('_id', item.id);
                     listitem.data('streetdata',item.streetdata);
+                    
                     google.maps.event.addListener(marker, 'click', function() {
-                    currentMarker = marker;
-                    //map.setCenter(marker.getPosition());
-                    panorama.setPosition(marker.getPosition());
+                    	currentMarker = marker;
+                    	 $('#tablive li').each(function(){
+                             if($(this).data('marker')==currentMarker){
+		                    	currentId = $(this).data('_id');
+                             }
+                         });
+                    	
+	                    console.log(currentId);
+	                    //map.setCenter(marker.getPosition());
+	                    panorama.setPosition(marker.getPosition());
 
                         var SVW_MAX=1000; // maximum street-view distance in meters
                         var SVW_INC=25;  // increment street-view distance in meters
@@ -159,6 +171,7 @@
                                 stepMarker($(this).data('streetdata'), $(this).data('marker'));
                             //}
                         });
+                        send();
                     });
 
 
@@ -204,6 +217,22 @@
                 google.maps.event.addListener(panorama, 'position_changed', function() {
                 	recalculateDistance();
                 });
+                
+                $('#liveButton').click(function(event) {
+                	$.ajax({
+                        url:"http://192.168.1.150:8080/live",
+                        dataType: 'json',
+                        success:function(json){
+                            //console.log(json);
+                            clear_lists();
+                            var c = json.data.length;
+                            for(var i=0;i<c;i++){
+                                add_item(json.data[i], '#tablive',i);
+                                console.log(json.data[i]);
+                            }
+                        }
+                    });
+                });
             }
 
 
@@ -237,7 +266,7 @@
             <div class="col-lg-3">
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#tabnearest" data-toggle="tab">Nearest</a></li>
-                    <li><a href="#tabnlive" data-toggle="tab">Live</a></li>
+                    <li><a id="liveButton" href="#tablive" data-toggle="tab">Live</a></li>
                     <li><a href="#tabpopular" data-toggle="tab">Popular</a></li>
                 </ul>
                 <div class="tab-content">
@@ -247,7 +276,7 @@
 
                         </ul>
                     </div>
-                    <div  class="tab-pane" id="tabnlive">
+                    <div  class="tab-pane" id="tablive">
                         <h2>Live graffities</h2>
                         <ul class="list-group">
 

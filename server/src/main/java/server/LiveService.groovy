@@ -38,19 +38,26 @@ class LiveService {
 
 	List<GraffitiData> getLives(){
 		[
-			new GraffitiData(id: '1', user: "anonymous", description: "N/A", loc: [52.506991, 13.436708])
+			new GraffitiData(id: '1', user: "anonymous", description: "N/A 1", loc: [52.506893, 13.436636]),
+			new GraffitiData(id: '2', user: "anonymous", description: "N/A 2", loc: [52.506893, 13.436636])
 		]
 	}
 
-	void stream(WebSocketSession session) {
-		polylines.each {
-			String[] points = it.split(" ")
-			points.each {
-				String[] xy = it.split(",")
-				session.sendMessage(new TextMessage("${xy[0]} ${xy[1]}"))
-				Thread.sleep(100)
+	def map = [:].withDefault {[]}
+
+	void stream(WebSocketSession session, TextMessage message) {
+		if (!map[(session.id)].contains(message.payload)) {
+			map[(session.id)] += message.payload
+
+			polylines.each {
+				String[] points = it.split(" ")
+				points.each {
+					String[] xy = it.split(",")
+					session.sendMessage(new TextMessage("${xy[0]} ${xy[1]}"))
+					Thread.sleep(100)
+				}
+				session.sendMessage(new TextMessage("stop"))
 			}
-			session.sendMessage(new TextMessage("stop"))
 		}
 	}
 }
