@@ -59,14 +59,14 @@ class StorageService {
 	}
 
 	void saveImage(byte[] bytes) {
-		println bytes
+		//		println bytes
 		randomLoc[0] = randomLoc[0]-0.000020
 		randomLoc[1] = randomLoc[1]+0.000030
 		def entity = new GraffitiData(user: "anonymous", description: "random graffiti", loc: [
 			randomLoc[0],
 			randomLoc[1]
 		], timestamp: new Date(), popularity: 2.5, image: bytes)
-		println entity
+		//		println entity
 		repo.save(entity)
 	}
 

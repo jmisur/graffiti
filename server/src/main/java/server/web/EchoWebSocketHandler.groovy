@@ -3,12 +3,10 @@ package server.web
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.adapter.TextWebSocketHandlerAdapter
-import org.springframework.web.socket.sockjs.SockJsException
 
 import server.LiveService
 
@@ -32,10 +30,5 @@ class EchoWebSocketHandler extends TextWebSocketHandlerAdapter {
 	@Override
 	void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
 		session.close(CloseStatus.SERVER_ERROR)
-	}
-
-	@ExceptionHandler(SockJsException)
-	void doStuff(SockJsException e) {
-		println e.message
 	}
 }
