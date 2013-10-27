@@ -189,15 +189,16 @@ class SensorDataProcessor {
                 Log.i(LOG_TAG, "sent " + log + " :  " + extrema.get(i));
                 
             }
+            long lastTimestamp = points.get(points.size()-1).mTimeStamp;
             switch (index) {
                 case 0:
-                    mListener.onMotionStopX();
+                    mListener.onMotionStopX(lastTime);
                     break;
                 case 1:
-                    mListener.onMotionStopY();
+                    mListener.onMotionStopY(lastTime);
                     break;
                 case 2:
-                    mListener.onMotionStopZ();
+                    mListener.onMotionStopZ(lastTime);
                     break;
             }
         }

@@ -4,9 +4,9 @@ import org.graffiti.grafroid.sensor.SensorPoint;
 
 public interface AccelerationMotionEventListener {
 
-    void onMotionStopX();
-    void onMotionStopY();
-    void onMotionStopZ();
+    void onMotionStopX(long timestamp);
+    void onMotionStopY(long timestamp);
+    void onMotionStopZ(long timestamp);
     
 	void onMotionDownX(SensorPoint p);
 

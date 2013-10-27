@@ -12,6 +12,8 @@ import java.net.URLEncoder;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
 public class ImageUploadService extends IntentService {
@@ -29,16 +31,16 @@ public class ImageUploadService extends IntentService {
     
     @Override
     protected void onHandleIntent(Intent intent) {
-        String payload = intent.getStringExtra(EXTRA_PAYLOAD);
+        Bitmap payload = intent.getParcelableExtra(EXTRA_PAYLOAD);
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL("http://192.168.1.150:8080/upload");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setRequestProperty("Content-Type", "image/jpeg");
             urlConnection.connect();
             DataOutputStream printout = new DataOutputStream(urlConnection.getOutputStream());
-            printout.writeUTF(URLEncoder.encode(payload, "UTF-8"));
+            payload.compress(CompressFormat.JPEG, 75, printout);
             printout.flush();
             printout.close();
             int httpResult = urlConnection.getResponseCode();

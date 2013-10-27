@@ -15,7 +15,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -75,7 +77,8 @@ public class DrawActivity extends RoboActivity {
             public void onClick(View v) {
                 //start service to extract language file
                 Intent serviceIntent = new Intent(DrawActivity.this, ImageUploadService.class);
-                serviceIntent.putExtra(ImageUploadService.EXTRA_PAYLOAD, "{\"data\":hello jurai}");
+                Bitmap bitmap = ((BitmapDrawable)mDrawingImage.getDrawable()).getBitmap();
+                serviceIntent.putExtra(ImageUploadService.EXTRA_PAYLOAD, bitmap);
                 DrawActivity.this.startService(serviceIntent);
                 mSaveButton.setVisibility(View.INVISIBLE);
             }

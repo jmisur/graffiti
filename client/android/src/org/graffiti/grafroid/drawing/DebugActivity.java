@@ -108,20 +108,22 @@ public class DebugActivity extends RoboActivity implements View.OnTouchListener,
     }
 
     @Override
-    public void onMotionStopX() {
+    public void onMotionStopX(long timestamp) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void onMotionStopY() {
+    public void onMotionStopY(long timestamp) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void onMotionStopZ() {
+    public void onMotionStopZ(long timestamp) {
         // TODO Auto-generated method stub
         
     }
+
+
 }
