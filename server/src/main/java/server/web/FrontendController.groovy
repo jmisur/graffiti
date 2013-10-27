@@ -22,8 +22,26 @@ class FrontendController {
 	@ResponseBody
 	FindResponse find(@RequestParam("lat0") String lat0, @RequestParam("long0") String long0,
 			@RequestParam("lat1") String lat1, @RequestParam("long1") String long1,HttpServletResponse response ){
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Origin", "*")
 		List<GraffitiData> data = storage.find(lat0, long0, lat1, long1)
+		println data
+		new FindResponse(data: data.collect {new GraffitiResponse(it)})
+	}
+
+	@RequestMapping(value = "/popular", method=RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	FindResponse popular(HttpServletResponse response ){
+		response.addHeader("Access-Control-Allow-Origin", "*")
+		List<GraffitiData> data = storage.popular()
+		println data
+		new FindResponse(data: data.collect {new GraffitiResponse(it)})
+	}
+
+	@RequestMapping(value = "/live", method=RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	FindResponse live(HttpServletResponse response ){
+		response.addHeader("Access-Control-Allow-Origin", "*")
+		List<GraffitiData> data = storage.live()
 		println data
 		new FindResponse(data: data.collect {new GraffitiResponse(it)})
 	}

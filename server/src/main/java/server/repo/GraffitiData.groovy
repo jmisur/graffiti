@@ -8,10 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection="graffiti")
 class GraffitiData {
 
+	String id
 	String user
 	String description
 	Integer height
 	Integer width
 	double[] loc
 	List<String> data
+	Date timestamp
+	Double popularity
 }
