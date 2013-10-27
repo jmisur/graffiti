@@ -50,11 +50,17 @@ function stepMarker(livegraf, marker, image){
     if(!marker){
         marker = currentMarker;
     }
-    if (!image) {
-    	image = marker.getIcon();
-    }
-    if (!livegraf) {
-    	livegraf = marker.getIcon().path;
+    
+    var useLivegraf = false;
+    if (livegraf) useLivegraf = true;
+    
+    if (!livegraf && !image) {
+    	if (marker.getIcon().path) {
+    		useLivegraf = true;
+    		livegraf = marker.getIcon().path;
+    	} else {
+    		image = marker.getIcon();
+    	}
     }
 
 //    console.log('33333'+livegraf);
@@ -63,7 +69,7 @@ function stepMarker(livegraf, marker, image){
     if(panorama.getVisible()) {
     		var distance = google.maps.geometry.spherical.computeDistanceBetween(panorama.getPosition(), marker.getPosition());
             if(distance==0) distance = 10;
-            if(image){
+            if(!useLivegraf){
 //                console.log('image gefunden');
                 marker.setIcon({
                     url: image,
