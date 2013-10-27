@@ -16,25 +16,26 @@ ws.onmessage = function (event) {
     if(message == 'stop'){
         currentline = null;
     } else if(currentline == null){
+    	currentline = '';
         //new line starts
         //currentline = $('<polyline points="1,1 10,10" style="fill:none;stroke:black;stroke-width:3" />');
-        xmlns = "http://www.w3.org/2000/svg";
-        currentline = document.createElementNS(xmlns,"polyline");
+//        xmlns = "http://www.w3.org/2000/svg";
+//        currentline = document.createElementNS(xmlns,"polyline");
         //console.log(currentline);
         //currentline = $('#realtimepaintingarea polyline');
-        $('#realtimepaintingarea').get(0).appendChild(currentline);
-        currentline = $('#realtimepaintingarea polyline').eq($('#realtimepaintingarea polyline').length-1);
-        currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':5});
-        currentline.attr('transform', 'scale(0.3)')
-        pathtest = message + ' ';
+//        $('#realtimepaintingarea').get(0).appendChild(currentline);
+//        currentline = $('#realtimepaintingarea polyline').eq($('#realtimepaintingarea polyline').length-1);
+//        currentline.css({'fill':'none', 'stroke':'black', 'stroke-width':5});
+//        currentline.attr('transform', 'scale(0.3)')
+//        pathtest = message + ' ';
         livegraf += 'M ' + message + ' ';
-        currentline.attr('points',pathtest);
+//        currentline.attr('points',pathtest);
 
         stepMarker(livegraf);
     } else {
-        pathtest += message +' ';
+//        pathtest += message +' ';
         livegraf += 'L ' + message + ' ';
-        currentline.attr('points',pathtest);
+//        currentline.attr('points',pathtest);
         
         stepMarker(livegraf);
     }
@@ -84,8 +85,8 @@ function send() {
 
 
 function print(message) {
-    var messages = document.getElementById('message');
-    messages.value += message + "\n";
+  //  var messages = document.getElementById('message');
+   // messages.value += message + "\n";
 }
 
 
