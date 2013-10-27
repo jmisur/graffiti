@@ -10,15 +10,16 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:background="@drawable/left_navigation_spray_screen"
-        android:orientation="vertical"
-        android:padding="8dp" >
+        android:orientation="vertical" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/spray_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_width="140px"
+            android:layout_height="140px"
+            android:layout_marginLeft="15px"
+            android:layout_marginTop="130dp"
             android:background="@null"
+            android:scaleType="fitCenter"
             android:src="@drawable/spray_button" />
     </RelativeLayout>
 
@@ -29,23 +30,25 @@
         android:background="@drawable/right_navigation_spray_screen"
         android:orientation="vertical" >
 
-        <ImageButton
+        <ImageView
             android:id="@+id/color_button"
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="130px"
+            android:layout_height="130px"
             android:layout_gravity="right"
-            android:layout_marginRight="15px"
-            android:layout_marginTop="30px"
+            android:layout_marginRight="13px"
+            android:layout_marginTop="25px"
             android:background="@null"
+            android:scaleType="centerCrop"
             android:src="@drawable/colour_button" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/stroke_button"
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:scaleType="centerCrop"
+            android:layout_width="130px"
+            android:layout_height="130px"
             android:layout_gravity="right"
-            android:layout_marginRight="15px"
-            android:layout_marginTop="40px"
+            android:layout_marginRight="10px"
+            android:layout_marginTop="35px"
             android:background="@null"
             android:src="@drawable/stroke_button" />
     </LinearLayout>
