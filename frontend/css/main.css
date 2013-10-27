@@ -46,6 +46,7 @@ body{
 
 .previewmarker{
     width:30px;
+    cursor:pointer;
 }
 
 #pano{
@@ -58,4 +59,7 @@ body{
 }
 
 
-
+#logo{
+    position:relative;
+    top:-14px;
+}

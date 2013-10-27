@@ -142,7 +142,11 @@
                     listitem.data('marker',marker);
                     listitem.data('_id', item.id);
                     listitem.data('streetdata',item.streetdata);
-                    
+                    $('.previewmarker',listitem).click(function(){
+                        map.setCenter($(this).parents('li').data('marker').getPosition());
+                    });
+
+
                     google.maps.event.addListener(marker, 'click', function() {
                     	currentMarker = marker;
                     	 $('#tablive li').each(function(){
@@ -253,7 +257,7 @@
     <div class="container ">
         <div class="row">
             <div class="col-lg-3">
-                <img src="img/logo240.png" />
+                <img id="logo" src="img/logo240.png" />
             </div>
             <div class="col-lg-6 mt4">
                 <input id="searchfield" class="form-control input-lg" placeholder="Search place" type="text" placeholder=".input-lg">
