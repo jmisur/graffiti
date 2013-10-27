@@ -22,7 +22,7 @@ public class DrawingBitmapController {
         final Canvas drawingCanvas = new Canvas(bitmap);
         
         //FIXME temp stuff:
-        final Paint pencil = getPencil();
+        final Paint pencil = getPencil(0);
         final Paint outerPencil = getOuterPencil(pencil);
         drawingCanvas.drawPath(drawPath, outerPencil);
         drawingCanvas.drawPath(drawPath, pencil);
@@ -33,10 +33,18 @@ public class DrawingBitmapController {
         
         final Path drawPath = new Path();
         //FIXME temp stuff:
-        drawPath.moveTo(100, 100);
-        
+        drawPath.moveTo(500, 500);
+
+        ThreeAxisPoint lastPoint = null;
         for (final ThreeAxisPoint threeAxisPoint : pathPoints) {
-            drawPath.rLineTo((float) threeAxisPoint.getXPoint().mValue, (float) threeAxisPoint.getYPoint().mValue);
+            final long timeDiff = (lastPoint == null) ? 0 : threeAxisPoint.getTimeStamp() - lastPoint.getTimeStamp();
+            final double xValue = threeAxisPoint.getXPoint().mValue;
+            final double yValue = threeAxisPoint.getYPoint().mValue;
+            final float xMovement = (float)((double)timeDiff * xValue) / 10;
+            final float yMovement = (float)((double)timeDiff * yValue) / 10;
+            drawPath.rLineTo(xMovement, yMovement);
+
+            lastPoint = threeAxisPoint;
         }
         
         draw(bitmap, drawPath);
@@ -45,7 +53,7 @@ public class DrawingBitmapController {
     public void render(final ImmutableList<ThreeAxisPoint> pathPoints, final ImageView view) {
         Preconditions.checkNotNull(view);
         
-        final Bitmap drawingBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        final Bitmap drawingBitmap = Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888);
         final ImmutableList<ThreeAxisPoint> adjustedPoints = adjustForDeviceOrientation(pathPoints);
         draw(drawingBitmap, adjustedPoints);
         view.setImageBitmap(drawingBitmap);
@@ -74,11 +82,12 @@ public class DrawingBitmapController {
         }};
     }
     
-    private Paint getPencil() {
+    private Paint getPencil(final int iteration) {
         final Paint pencil = new Paint();
         
         pencil.setAntiAlias(true);
-        pencil.setColor(Color.RED);
+        final int color = Color.argb(255, 255, (10*iteration)%255, 0);
+        pencil.setColor(color);
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
         pencil.setStrokeWidth(5f);

@@ -32,21 +32,21 @@ public class DrawingEventHandler implements AccelerationMotionEventListener {
     }
 
     @Override
-    public void onMotionStopX(long timestamp) {
-        // TODO Auto-generated method stub
-        
+    public void onMotionStopX(long timeStamp) {
+        final ThreeAxisPoint xThreePoint = new ThreeAxisPoint(new SensorPoint(timeStamp, 0), null, null);
+        mDrawPath.addPoint(xThreePoint);
     }
 
     @Override
-    public void onMotionStopY(long timestamp) {
-        // TODO Auto-generated method stub
-        
+    public void onMotionStopY(long timeStamp) {
+        final ThreeAxisPoint yThreePoint = new ThreeAxisPoint(null, new SensorPoint(timeStamp, 0), null);
+        mDrawPath.addPoint(yThreePoint);
     }
 
     @Override
-    public void onMotionStopZ(long timestamp) {
-        // TODO Auto-generated method stub
-        
+    public void onMotionStopZ(long timeStamp) {
+        final ThreeAxisPoint zThreePoint = new ThreeAxisPoint(null, null, new SensorPoint(timeStamp, 0));
+        mDrawPath.addPoint(zThreePoint);
     }
 
 }

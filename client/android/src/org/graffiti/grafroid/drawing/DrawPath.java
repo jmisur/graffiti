@@ -16,7 +16,7 @@ import java.util.Map;
 
     private final List<ThreeAxisPoint> mThreePoints = Lists.newArrayList();
 
-    private static final float INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO = 10;
+    private static final float INTERPOLATION_AMPLITUDE_AMPLIFICATION_RATIO = 1;
 
     public void addPoint(final ThreeAxisPoint point) {
         Preconditions.checkNotNull(point);
@@ -71,9 +71,13 @@ import java.util.Map;
                     final double xDistance = originalXPoint.mValue - lastXProcessedPoint.mValue;
                     final long timeDistance = originalXPoint.mTimeStamp - lastXProcessedPoint.mTimeStamp;
                     for (final long timeStamp : xUnprocessedTimeStamps) {
-                        final double timeStampDistance = ((double)(timeStamp - lastXProcessedPoint.mTimeStamp)) / timeDistance;
-                        final double xDistanceAtTimeStamp = xDistance * timeStampDistance;
-                        interpolatedXPoints.add(new SensorPoint(timeStamp, xDistanceAtTimeStamp));
+                        if (originalXPoint.mValue == 0) {
+                            interpolatedXPoints.add(new SensorPoint(timeStamp, 0));
+                        } else {
+                            final double timeStampDistance = ((double)(timeStamp - lastXProcessedPoint.mTimeStamp)) / timeDistance;
+                            final double xDistanceAtTimeStamp = xDistance * timeStampDistance;
+                            interpolatedXPoints.add(new SensorPoint(timeStamp, xDistanceAtTimeStamp));
+                        }
                     }
                     xUnprocessedTimeStamps.clear();
 
@@ -98,9 +102,13 @@ import java.util.Map;
                     final double yDistance = originalYPoint.mValue - lastYProcessedPoint.mValue;
                     final long timeDistance = originalYPoint.mTimeStamp - lastYProcessedPoint.mTimeStamp;
                     for (final long timeStamp : yUnprocessedTimeStamps) {
-                        final double timeStampDistance = ((double)(timeStamp - lastYProcessedPoint.mTimeStamp)) / timeDistance;
-                        final double yDistanceAtTimeStamp = yDistance * timeStampDistance;
-                        interpolatedYPoints.add(new SensorPoint(timeStamp, yDistanceAtTimeStamp));
+                        if (originalYPoint.mValue == 0) {
+                            interpolatedYPoints.add(new SensorPoint(timeStamp, 0));
+                        } else {
+                            final double timeStampDistance = ((double)(timeStamp - lastYProcessedPoint.mTimeStamp)) / timeDistance;
+                            final double yDistanceAtTimeStamp = yDistance * timeStampDistance;
+                            interpolatedYPoints.add(new SensorPoint(timeStamp, yDistanceAtTimeStamp));
+                        }
                     }
                     yUnprocessedTimeStamps.clear();
 
