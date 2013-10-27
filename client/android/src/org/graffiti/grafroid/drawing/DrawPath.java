@@ -1,12 +1,15 @@
 package org.graffiti.grafroid.drawing;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.graffiti.grafroid.sensor.SensorPoint;
 
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 /*package*/ class DrawPath {
@@ -28,21 +31,42 @@ import java.util.List;
     public ImmutableList<ThreeAxisPoint> getInterpolatedPoints() {
         final List<ThreeAxisPoint> pointsCopy = Lists.newArrayList(mThreePoints);
 
+        final Map<Long, ThreeAxisPoint> orderedPoints = Maps.newTreeMap();
+        for (ThreeAxisPoint point : pointsCopy) {
+            final Long timeStamp = point.getTimeStamp();
+            if (orderedPoints.containsKey(timeStamp)) {
+                final ThreeAxisPoint currentPoint = orderedPoints.get(timeStamp);
+                final ThreeAxisPoint newPoint = ThreeAxisPoint.fromThreePoint(
+                        currentPoint,
+                        Optional.fromNullable(point.getXPoint()),
+                        Optional.fromNullable(point.getYPoint()),
+                        Optional.fromNullable(point.getZPoint()));
+                orderedPoints.put(timeStamp, newPoint);
+            } else {
+                orderedPoints.put(timeStamp, point);
+            }
+        }
+
         final List<Long> xUnprocessedTimeStamps = Lists.newArrayList();
         final List<Long> yUnprocessedTimeStamps = Lists.newArrayList();
         SensorPoint lastXProcessedPoint = null;
         SensorPoint lastYProcessedPoint = null;
         final List<SensorPoint> interpolatedXPoints = Lists.newArrayList();
         final List<SensorPoint> interpolatedYPoints = Lists.newArrayList();
-        for (final ThreeAxisPoint originalPoint : pointsCopy) {
+        for (final ThreeAxisPoint originalPoint : orderedPoints.values()) {
             final SensorPoint originalXPoint = originalPoint.getXPoint();
             final SensorPoint originalYPoint = originalPoint.getYPoint();
             final long originalPointTimeStamp = originalPoint.getTimeStamp();
 
             if (originalXPoint != null) {
                 if (lastXProcessedPoint == null) {
+                    for (final long timeStamp : xUnprocessedTimeStamps) {
+                        interpolatedXPoints.add(new SensorPoint(timeStamp, 0));
+                    }
+                    xUnprocessedTimeStamps.clear();
+
+                    interpolatedXPoints.add(originalXPoint);
                     lastXProcessedPoint = originalXPoint;
-                    xUnprocessedTimeStamps.add(originalPointTimeStamp);
                 } else {
                     final double xDistance = originalXPoint.mValue - lastXProcessedPoint.mValue;
                     final long timeDistance = originalXPoint.mTimeStamp - lastXProcessedPoint.mTimeStamp;
@@ -63,8 +87,13 @@ import java.util.List;
 
             if (originalYPoint != null) {
                 if (lastYProcessedPoint == null) {
+                    for (final long timeStamp : yUnprocessedTimeStamps) {
+                        interpolatedYPoints.add(new SensorPoint(timeStamp, 0));
+                    }
+                    yUnprocessedTimeStamps.clear();
+
+                    interpolatedYPoints.add(originalYPoint);
                     lastYProcessedPoint = originalYPoint;
-                    yUnprocessedTimeStamps.add(originalPointTimeStamp);
                 } else {
                     final double yDistance = originalYPoint.mValue - lastYProcessedPoint.mValue;
                     final long timeDistance = originalYPoint.mTimeStamp - lastYProcessedPoint.mTimeStamp;

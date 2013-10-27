@@ -92,6 +92,7 @@ public class DrawActivity extends RoboActivity {
         private LinearLayout            mDebugContainerY;
         
         void startRecording() {
+            mPath.clear();
             mSensorDataManager.startRecording(mDrawingEventHandler);
             mSensorDataManager.setDebugDataListener(this);
             
@@ -101,7 +102,6 @@ public class DrawActivity extends RoboActivity {
             mSensorDataManager.stopRecording();
             drawCurrentPath();
             mDrawingImage.invalidate();
-            mPath.clear();
         }
         
         private void drawCurrentPath() {
