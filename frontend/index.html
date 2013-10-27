@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Graffiti</title>
+        <title>Graffcity</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
@@ -31,7 +31,7 @@
 
 
 
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=geometry"></script>
         <script>
             var map;
             var panorama;
@@ -39,6 +39,30 @@
 
 
             function initialize() {
+
+                var styles = [
+                    {
+                        stylers: [
+                            { hue: "#6d6e71" },
+                            { saturation: -150 }
+                        ]
+                    },{
+                        featureType: "road",
+                        elementType: "geometry",
+                        stylers: [
+                            { lightness: 100 },
+                            { visibility: "simplified" }
+                        ]
+                    },{
+                        featureType: "road",
+                        elementType: "labels",
+                        stylers: [
+                            { visibility: "off" }
+                        ]
+                    }
+                ];
+
+
 
                 // Set up the map
                 var mapOptions = {
@@ -48,7 +72,7 @@
                     streetViewControl: true
                 };
                 map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
-
+                map.setOptions({styles: styles});
 
                 var cardchange = function(evt) {
                     lat2 = map.getBounds().getNorthEast().lat();//west to east
@@ -85,7 +109,7 @@
 					var lines = '';
                     var zoomfactor = 230/item.width;
 					for (var i = 0; i < item.data.length; i++) {
-						 lines += '<polyline points="'+item.data[i]+'" style="fill:none;stroke:black;stroke-width:3" transform="scale('+zoomfactor+')"/>';
+						 lines += '<polyline points="'+item.data[i]+'" style="fill:none;stroke:black;stroke-width:5" transform="scale('+zoomfactor+')"/>';
 					}
                     var colors = ['blue','green','orange','pink'];
                     var listitem = $('<li class="list-group-item">' +
@@ -99,8 +123,9 @@
                         title: item.description
                     });
                     listitem.data('marker',marker);
+                    listitem.data('streetdata',item.streetdata);
                     google.maps.event.addListener(marker, 'click', function() {
-                    	currentMarker = marker;
+                    currentMarker = marker;
                     //map.setCenter(marker.getPosition());
                     panorama.setPosition(marker.getPosition());
 
@@ -120,14 +145,20 @@
                                     svwmap.setPov({ heading: svwhdg, pitch: 0 });
                                     //svwMarker=new google.maps.Marker({ map:svwmap, position: adrloc });
                                     svwmap.setVisible(true);
-                                }
-                                else if(svwdst<SVW_MAX) {
+                                }else if(svwdst<SVW_MAX) {
                                     resolveStreetView(adrloc,svwdst+SVW_INC);
                                 }
                             });
                         }
                         resolveStreetView(marker.getPosition(),SVW_INC);
 
+                    });
+                    google.maps.event.addListener(panorama, 'visible_changed', function() {
+                        $('#tabnearest li, #tabpopular li').each(function(){
+                            //if($(this).data('marker')==currentMarker){
+                                stepMarker($(this).data('streetdata'), $(this).data('marker'));
+                            //}
+                        });
                     });
 
 
@@ -151,11 +182,7 @@
                 }
 
                 $('#searchbutton').click(function(){codeAddress()});
-
-                // We get the map's default panorama and set up some defaults.
-                // Note that we don't yet set it visible.
                 panorama = map.getStreetView();
-                //panorama.setPosition(astorPlace);
                 panorama.setPov(/** @type {google.maps.StreetViewPov} */({
                     heading: 265,
                     pitch: 0
@@ -200,7 +227,7 @@
                 <img src="img/logo240.jpg" />
             </div>
             <div class="col-lg-6 mt4">
-                <input id="searchfield" class="form-control input-lg" placeholder="search place" type="text" placeholder=".input-lg">
+                <input id="searchfield" class="form-control input-lg" placeholder="Search place" type="text" placeholder=".input-lg">
             </div>
             <div class="col-lg-3 mt4">
                 <button id="searchbutton" type="button" class="btn btn-primary btn-lg">Search</button>
@@ -257,26 +284,6 @@
 
             </div>
         </div>
-      <div class="row">
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-        </div>
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-       </div>
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-        </div>
-      </div>
-
-      <hr>
-
       <footer>
         <p>&copy; Company 2013</p>
       </footer>
