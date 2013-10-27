@@ -42,12 +42,11 @@
                 // Set up the map
                 var mapOptions = {
                     center: new google.maps.LatLng(52.519955, 13.403888),
-                    zoom: 18,
+                    zoom: 10,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    streetViewControl: false
+                    streetViewControl: true
                 };
-                map = new google.maps.Map(document.getElementById('map-canvas'),
-                        mapOptions);
+                map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
 
 
                 var cardchange = function(evt) {
@@ -74,7 +73,6 @@
                 google.maps.event.addListener(map, 'zoom_changed', cardchange);
 
                 function clear_lists(){
-
                     $('#tabnearest li, #tabnlive li, #tabpopular li').each(function(){
                         $(this).data('marker').setMap(null);
                         $(this).remove();
@@ -100,6 +98,37 @@
                         title: item.description
                     });
                     listitem.data('marker',marker);
+                    google.maps.event.addListener(marker, 'click', function() {
+                    //map.setCenter(marker.getPosition());
+                    panorama.setPosition(marker.getPosition());
+
+                        var SVW_MAX=1000; // maximum street-view distance in meters
+                        var SVW_INC=25;  // increment street-view distance in meters
+                        var svwService=new google.maps.StreetViewService(); // street view service
+                        var svwMarker=marker; // street view marker
+
+
+                        var resolveStreetView=function(adrloc,svwdst) {
+                            svwService.getPanoramaByLocation(adrloc,svwdst,function(dta,sts) {
+                                if(sts==google.maps.StreetViewStatus.OK) {
+                                    var svwloc=dta.location.latLng;
+                                    var svwhdg=google.maps.geometry.spherical.computeHeading(svwloc,adrloc);
+                                    var svwmap=map.getStreetView();
+                                    svwmap.setPosition(svwloc);
+                                    svwmap.setPov({ heading: svwhdg, pitch: 0 });
+                                    //svwMarker=new google.maps.Marker({ map:svwmap, position: adrloc });
+                                    svwmap.setVisible(true);
+                                }
+                                else if(svwdst<SVW_MAX) {
+                                    resolveStreetView(adrloc,svwdst+SVW_INC);
+                                }
+                            });
+                        }
+                        resolveStreetView(marker.getPosition(),SVW_INC);
+
+                    });
+
+
                 }
 
                 //search
@@ -115,8 +144,6 @@
                                 position: results[0].geometry.location
                             });
                             cardchange();
-                        } else {
-                            //alert('Geocode was not successful for the following reason: ' + status);
                         }
                     });
                 }
@@ -131,16 +158,20 @@
                     heading: 265,
                     pitch: 0
                 }));
+
+                function toggleStreetView() {
+                    var toggle = panorama.getVisible();
+                    if (toggle == false) {
+                        panorama.setVisible(true);
+                    } else {
+                        panorama.setVisible(false);
+                    }
+                }
+                google.maps.event.addListenerOnce(map, 'idle', function(){
+                    cardchange();
+                });
             }
 
-            function toggleStreetView() {
-                var toggle = panorama.getVisible();
-                if (toggle == false) {
-                    panorama.setVisible(true);
-                } else {
-                    panorama.setVisible(false);
-                }
-            }
 
             google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -243,6 +274,8 @@
         <p>&copy; Company 2013</p>
       </footer>
     </div> <!-- /container -->
+
+
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
