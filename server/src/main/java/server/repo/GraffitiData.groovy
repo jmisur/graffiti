@@ -17,4 +17,5 @@ class GraffitiData {
 	List<String> data
 	Date timestamp
 	Double popularity
+	byte[] image
 }

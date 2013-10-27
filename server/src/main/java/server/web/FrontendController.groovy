@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletResponse
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -44,5 +45,12 @@ class FrontendController {
 		List<GraffitiData> data = storage.live()
 		println data
 		new FindResponse(data: data.collect {new GraffitiResponse(it)})
+	}
+
+	@RequestMapping(value = "/image/{id}", method=RequestMethod.GET, produces="image/png", consumes="*/*")
+	@ResponseBody
+	byte[] image(@PathVariable("id") String id, HttpServletResponse response){
+		response.addHeader("Access-Control-Allow-Origin", "*")
+		return  storage.getImage(id)
 	}
 }

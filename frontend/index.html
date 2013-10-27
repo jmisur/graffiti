@@ -68,32 +68,46 @@
                 // Set up the map
                 var mapOptions = {
                     center: new google.maps.LatLng(52.519955, 13.403888),
-                    zoom: 10,
+                    zoom: 13,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
                     streetViewControl: true
                 };
                 map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
                 map.setOptions({styles: styles});
 
+                //nearest, live, popular
+                var currenttype = 'nearest';
+
                 var cardchange = function(evt) {
-                    lat2 = map.getBounds().getNorthEast().lat();//west to east
-                    lng2 = map.getBounds().getNorthEast().lng();
-                    lat1 = map.getBounds().getSouthWest().lat();
-                    lng1 = map.getBounds().getSouthWest().lng();
+                    if(currenttype=='nearest'){
+                        lat2 = map.getBounds().getNorthEast().lat();//west to east
+                        lng2 = map.getBounds().getNorthEast().lng();
+                        lat1 = map.getBounds().getSouthWest().lat();
+                        lng1 = map.getBounds().getSouthWest().lng();
+                        var path = "http://192.168.1.150:8080/find?lat0="+lat1+"&long0="+lng1+"&lat1="+lat2+"&long1="+lng2;
+                    }else if(currenttype=='live'){
+                        var path = "http://192.168.1.150:8080/live";
+                    }else{
+                        var path = "http://192.168.1.150:8080/popular";
+                    }
+
                     $.ajax({
-                        url:"http://192.168.1.150:8080/find?lat0="+lat1+"&long0="+lng1+"&lat1="+lat2+"&long1="+lng2,
+                        url:path,
                         dataType: 'json',
                         success:function(json){
                             //console.log(json);
                             clear_lists();
                             var c = json.data.length;
                             for(var i=0;i<c;i++){
-                                add_item(json.data[i], '#tabnearest',i);
+                                add_item(json.data[i], '#tab'+currenttype,i);
                             }
                         }
                     });
                 }
 
+                $('#nearestButton').click(function(event) {currenttype = 'nearest'; cardchange();});
+                $('#liveButton').click(function(event) {currenttype = 'live'; cardchange();});
+                $('#popularButton').click(function(event) {currenttype = 'popular'; cardchange();});
 
                 google.maps.event.addListener(map, 'dragend', cardchange);
                 google.maps.event.addListener(map, 'zoom_changed', cardchange);
@@ -115,8 +129,16 @@
 						}
 					}
                     var colors = ['blue','green','orange','pink'];
+                    console.log(item.image);
+                    var img
+                    if (item.image == 'true') {
+                    	img = '<img width="230px" height="230px" src="/image/' + item.id + '"></img>' 
+                    } else { 
+                    	img = '<svg  style="height:'+Math.floor(zoomfactor*item.height)+'px" >'+lines +'</svg>';
+                	}
                     var listitem = $('<li class="list-group-item">' +
-                    		'<h3><img class="previewmarker" src="img/pinpoint_'+colors[(no%4)]+'_50x70px.png" /> '+item.description+'</h3>' +item.user+'<svg  style="height:'+Math.floor(zoomfactor*item.height)+'px" >'+lines +'</svg></li>');
+                    		'<h3><img class="previewmarker" src="img/pinpoint_'+colors[(no%4)]+'_50x70px.png" /> '+item.description+'</h3>' +item.user+
+                    		img +'</li>');
                     $(list+' ul').append(listitem);
                     var marker = new google.maps.Marker({
                         position: new google.maps.LatLng(item.latitude, item.longitude),
@@ -128,7 +150,12 @@
                     listitem.data('marker',marker);
                     listitem.data('_id', item.id);
                     listitem.data('streetdata',item.streetdata);
-                    
+                    listitem.data('image', item.image);
+                    $('.previewmarker',listitem).click(function(){
+                        map.setCenter($(this).parents('li').data('marker').getPosition());
+                    });
+
+
                     google.maps.event.addListener(marker, 'click', function() {
                     	currentMarker = marker;
                     	 $('#tablive li').each(function(){
@@ -168,7 +195,13 @@
                     google.maps.event.addListener(panorama, 'visible_changed', function() {
                         $('#tabnearest li, #tabpopular li').each(function(){
                             //if($(this).data('marker')==currentMarker){
-                                stepMarker($(this).data('streetdata'), $(this).data('marker'));
+                            	if ($(this).data('image') == 'true') {
+                            		console.log('/image/' + $(this).data('_id'));
+                                	stepMarker($(this).data('streetdata'), $(this).data('marker'), '/image/' + $(this).data('_id'));
+                            	} else {
+                            		console.log("NOOOOPE");
+                            		stepMarker($(this).data('streetdata'), $(this).data('marker'));
+                            	}
                             //}
                         });
                         send();
@@ -218,21 +251,7 @@
                 	recalculateDistance();
                 });
                 
-                $('#liveButton').click(function(event) {
-                	$.ajax({
-                        url:"http://192.168.1.150:8080/live",
-                        dataType: 'json',
-                        success:function(json){
-                            //console.log(json);
-                            clear_lists();
-                            var c = json.data.length;
-                            for(var i=0;i<c;i++){
-                                add_item(json.data[i], '#tablive',i);
-                                console.log(json.data[i]);
-                            }
-                        }
-                    });
-                });
+
             }
 
 
@@ -253,7 +272,7 @@
     <div class="container ">
         <div class="row">
             <div class="col-lg-3">
-                <img src="img/logo240.jpg" />
+                <img id="logo" src="img/logo240.png" />
             </div>
             <div class="col-lg-6 mt4">
                 <input id="searchfield" class="form-control input-lg" placeholder="Search place" type="text" placeholder=".input-lg">
@@ -265,9 +284,9 @@
         <div class="row mt1">
             <div class="col-lg-3">
                 <ul class="nav nav-pills">
-                    <li class="active"><a href="#tabnearest" data-toggle="tab">Nearest</a></li>
+                    <li class="active"><a id="nearestButton" href="#tabnearest" data-toggle="tab">Nearest</a></li>
                     <li><a id="liveButton" href="#tablive" data-toggle="tab">Live</a></li>
-                    <li><a href="#tabpopular" data-toggle="tab">Popular</a></li>
+                    <li><a id="popularButton" href="#tabpopular" data-toggle="tab">Popular</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="tabnearest">
@@ -291,26 +310,15 @@
                 </div>
             </div>
             <div class="col-lg-9 ">
-
-
-
                 <div id="map-canvas" class="map"></div>
-
-
-
-
-
-
-
-
-
+            <!--
                 <input id="text" />
                 <button id="send" onclick="send();">Send</button>
                 <textarea id="message" style="width: 300px; height: 300px;"></textarea>
                 <svg height="500" width="500" style="border:1px solid red" id="realtimepaintingarea" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
                 </svg>
-
+            -->
             </div>
         </div>
       <footer>

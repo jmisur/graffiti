@@ -19,7 +19,11 @@
 
 
 
-
+body{
+    background-image:url('/img/bg.jpg');
+    background-repeat:no-repeat;
+    background-position: center 0;
+}
 
 
 .navbar-brand, b, strong, h1,h2,h3{
@@ -42,6 +46,7 @@
 
 .previewmarker{
     width:30px;
+    cursor:pointer;
 }
 
 #pano{
@@ -54,4 +59,7 @@
 }
 
 
-
+#logo{
+    position:relative;
+    top:-14px;
+}
