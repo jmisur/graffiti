@@ -13,5 +13,6 @@ public interface AccelerationMotionEventListener {
 	void onMotionDownY(SensorPoint p);
 
 	void onMotionDownZ(SensorPoint p);
+    void onMotionTotalStop();
 
 }

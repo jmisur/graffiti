@@ -125,5 +125,11 @@ public class DebugActivity extends RoboActivity implements View.OnTouchListener,
         
     }
 
+    @Override
+    public void onMotionTotalStop() {
+        // TODO Auto-generated method stub
+        
+    }
+
 
 }

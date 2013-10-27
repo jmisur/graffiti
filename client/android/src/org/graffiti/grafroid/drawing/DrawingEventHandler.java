@@ -49,4 +49,10 @@ public class DrawingEventHandler implements AccelerationMotionEventListener {
         mDrawPath.addPoint(zThreePoint);
     }
 
+    @Override
+    public void onMotionTotalStop() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

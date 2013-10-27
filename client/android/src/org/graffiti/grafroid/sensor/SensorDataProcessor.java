@@ -110,7 +110,7 @@ class SensorDataProcessor {
             mYPoints.clear();
             findPeaks(mZPoints, 2);
             mZPoints.clear();
-            
+            mListener.onMotionTotalStop();
         }
     }
     
@@ -147,6 +147,8 @@ class SensorDataProcessor {
                 }
             }
         }
+        mListener.onMotionTotalStop();
+
     }
     
     private void findPeaks(List<SensorPoint> points, int index) {
