@@ -17,24 +17,24 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class DrawingBitmapController {
-    
+
     private void draw(final Bitmap bitmap, final Path drawPath) {
         Preconditions.checkNotNull(bitmap);
         final Canvas drawingCanvas = new Canvas(bitmap);
-        
+
         //FIXME temp stuff:
         final Paint pencil = getPencil(0);
         final Paint outerPencil = getOuterPencil(pencil);
         drawingCanvas.drawPath(drawPath, outerPencil);
         drawingCanvas.drawPath(drawPath, pencil);
     }
-    
-    private void draw(final Bitmap bitmap, final ImmutableList<ThreeAxisPoint> pathPoints) {
+
+    private void draw(final Bitmap bitmap, final float startX, final float startY, final ImmutableList<ThreeAxisPoint> pathPoints) {
         Preconditions.checkNotNull(bitmap);
-        
+
         final Path drawPath = new Path();
- drawPath.moveTo(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-               
+        drawPath.moveTo(startX, startY);
+
         ThreeAxisPoint lastPoint = null;
         float lastYMovement = 0;
         float lastXMovement = 0;
@@ -44,30 +44,29 @@ public class DrawingBitmapController {
             final double yValue = threeAxisPoint.getYPoint().mValue;
             final float xMovement = (float)((double)timeDiff * xValue) / 10;
             final float yMovement = (float)((double)timeDiff * yValue) / 10;
-            
+
             if (lastYMovement!=0){
                 final float x2 = (xMovement + lastXMovement) / 2;
                 final float y2 = (yMovement + lastYMovement) / 2;
-                //drawPath.rQuadTo(xMovement, yMovement, x2, y2);                
+                //drawPath.rQuadTo(xMovement, yMovement, x2, y2);
             }
             lastYMovement = yMovement;
             lastXMovement = xMovement;
             drawPath.rLineTo(xMovement, yMovement);
             lastPoint = threeAxisPoint;
         }
-        
+
         draw(bitmap, drawPath);
     }
-    
-    public void render(final List<ThreeAxisPoint> pathPoints, final ImageView view) {
+
+    public void render(final List<ThreeAxisPoint> pathPoints, final float startX, final float startY, final Bitmap bitmap, final ImageView view) {
         Preconditions.checkNotNull(view);
-        
-        final Bitmap drawingBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+
         final ImmutableList<ThreeAxisPoint> adjustedPoints = adjustForDeviceOrientation(pathPoints);
-        draw(drawingBitmap, adjustedPoints);
-        view.setImageBitmap(drawingBitmap);
+        draw(bitmap, startX, startY, adjustedPoints);
+        view.setImageBitmap(bitmap);
     }
-    
+
     private ImmutableList<ThreeAxisPoint> adjustForDeviceOrientation(final List<ThreeAxisPoint> sensorPoints) { //XXX allow parameterized orientation
         final List<ThreeAxisPoint> adjustedPoints = Lists.newArrayList();
         for (final ThreeAxisPoint sensorPoint : sensorPoints) {
@@ -78,7 +77,7 @@ public class DrawingBitmapController {
         }
         return ImmutableList.copyOf(adjustedPoints);
     }
-    
+
     private Paint getOuterPencil(final Paint inner) {
         return new Paint() {
             {
@@ -88,21 +87,21 @@ public class DrawingBitmapController {
                 setStrokeWidth((float) (inner.getStrokeWidth() * 1.5));
                 setStyle(Paint.Style.STROKE);
                 setStrokeJoin(Paint.Join.ROUND);
-                
+
             }
         };
     }
-    
+
     private Paint getPencil(final int iteration) {
         final Paint pencil = new Paint();
-        
+
         pencil.setAntiAlias(true);
         pencil.setColor(Color.argb(255, 248, 119, 4));
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
         pencil.setStrokeWidth(8f);
-        
+
         return pencil;
     }
-    
+
 }

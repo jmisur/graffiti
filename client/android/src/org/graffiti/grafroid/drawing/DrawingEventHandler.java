@@ -51,8 +51,7 @@ public class DrawingEventHandler implements AccelerationMotionEventListener {
 
     @Override
     public void onMotionTotalStop() {
-        // TODO Auto-generated method stub
-        
+
     }
 
 }
