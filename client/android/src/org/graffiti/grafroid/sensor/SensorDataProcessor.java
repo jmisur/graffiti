@@ -11,16 +11,18 @@ import android.util.Log;
 import com.google.common.base.Optional;
 
 class SensorDataProcessor {
-	private final static String LOG_TAG = SensorDataProcessor.class
+	private static final int SENSOR_WINDOW_WIDTH = 30;
+
+    private final static String LOG_TAG = SensorDataProcessor.class
 			.getSimpleName();
 
 	private List<SensorPoint> mXPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mYPoints = new ArrayList<SensorPoint>();
 	private List<SensorPoint> mZPoints = new ArrayList<SensorPoint>();
 
-	SensorWindow mXWindow = new SensorWindow(40);
-	SensorWindow mYWindow = new SensorWindow(40);
-	SensorWindow mZWindow = new SensorWindow(40);
+	SensorWindow mXWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
+	SensorWindow mYWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
+	SensorWindow mZWindow = new SensorWindow(SENSOR_WINDOW_WIDTH);
 
 	private AccelerationMotionEventListener mListener;
 	private Optional<DebugDataListener> mDebugListener = Optional.absent();
@@ -150,6 +152,7 @@ class SensorDataProcessor {
 		List<SensorPoint> extrema = new ArrayList<SensorPoint>();
 	    extrema.add(points.get(0));
 	    extrema.addAll(e);
+	    extrema.get(extrema.size()-1).mValue=0;
 
 		String log = "";
 		if (mDebugListener.isPresent()) {
@@ -170,7 +173,7 @@ class SensorDataProcessor {
 		if (extrema.size() > 1) {
 			// Log.i(LOG_TAG, "FOUND " + extrema.size() + " PEAKS FOR " + log);
 		    
-			for (int i = 0; i < extrema.size() - 1; i++) {
+			for (int i = 0; i < extrema.size(); i++) {
 				switch (index) {
 				case 0:
 					log = "X";

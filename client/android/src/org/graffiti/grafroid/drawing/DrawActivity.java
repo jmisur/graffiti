@@ -1,9 +1,23 @@
 package org.graffiti.grafroid.drawing;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.graffiti.grafroid.R;
+import org.graffiti.grafroid.sensor.SensorDataManager;
+import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
+import org.graffiti.grafroid.sensor.SensorPoint;
+
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContextSingleton;
+import roboguice.inject.InjectView;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -14,15 +28,6 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
 import com.jjoe64.graphview.LineGraphView;
-import org.graffiti.grafroid.R;
-import org.graffiti.grafroid.sensor.SensorDataManager;
-import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
-import org.graffiti.grafroid.sensor.SensorPoint;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContextSingleton;
-import roboguice.inject.InjectView;
-
-import java.util.List;
 
 /**
  * Activity showing the graffiti drawing.
@@ -34,6 +39,9 @@ public class DrawActivity extends RoboActivity {
     @InjectView(R.id.drawingImage)
     private ImageView                  mDrawingImage;
     
+    @InjectView(R.id.upload_button)
+    private ImageView mSaveButton;
+
     @Inject
     private DrawingControlViewListener mDrawingListener;
     
@@ -43,6 +51,15 @@ public class DrawActivity extends RoboActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawing);
+        mSaveButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                // TODO Auto-generated method stub
+                
+            }
+        });
     }
     
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -91,6 +108,10 @@ public class DrawActivity extends RoboActivity {
         @InjectView(R.id.debug_container_y)
         private LinearLayout            mDebugContainerY;
         
+
+        
+        List<ThreeAxisPoint> mAccumulatedPoints = new ArrayList<ThreeAxisPoint>();
+        
         void startRecording() {
             mPath.clear();
             mSensorDataManager.startRecording(mDrawingEventHandler);
@@ -106,6 +127,7 @@ public class DrawActivity extends RoboActivity {
         
         private void drawCurrentPath() {
             final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
+            mAccumulatedPoints.addAll(currentPath);
             mBitmapController.render(currentPath, mDrawingImage);
         }
 
