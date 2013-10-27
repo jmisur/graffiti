@@ -100,7 +100,7 @@ public class DrawingBitmapController {
         pencil.setColor(Color.argb(255, 248, 119, 4));
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
-        pencil.setStrokeWidth(8f);
+        pencil.setStrokeWidth(12f);
         
         return pencil;
     }
