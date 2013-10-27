@@ -76,8 +76,8 @@ public class DrawingBitmapController {
             {
                 setAntiAlias(true);
                 setColor(inner.getColor());
-                setAlpha(128);
-                setStrokeWidth((float) (inner.getStrokeWidth() * 1.5));
+                setAlpha(150);
+                setStrokeWidth((float) (inner.getStrokeWidth() * 1.25));
                 setStyle(Paint.Style.STROKE);
                 setStrokeJoin(Paint.Join.ROUND);
                 
@@ -89,10 +89,10 @@ public class DrawingBitmapController {
         final Paint pencil = new Paint();
         
         pencil.setAntiAlias(true);
-        pencil.setColor(Color.argb(255, 248, 119, 4));
+        pencil.setColor(Color.argb(200, 248, 119, 4));
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
-        pencil.setStrokeWidth(12f);
+        pencil.setStrokeWidth(15f);
         
         return pencil;
     }
