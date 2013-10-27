@@ -195,7 +195,11 @@
                     google.maps.event.addListener(panorama, 'visible_changed', function() {
                     	if (!panorama.getVisible()) {
                     		//console.log("PANORAMA GET VISIBLE TRUE");
-                    		cardchange();
+                    		//cardchange();
+                    		$('#tabnearest li, #tablive li, #tabpopular li').each(function(){
+                                console.log($('.previewmarker',$(this)).attr('src'));
+                                $(this).data('marker').setIcon($('.previewmarker',$(this)).attr('src'));
+                            });
                     	} else {
                     		//console.log("PANORAMA GET VISIBLE FALSE");
 	                        $('#tabnearest li, #tabpopular li').each(function(){

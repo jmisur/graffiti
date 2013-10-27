@@ -58,6 +58,7 @@ class LiveService {
 				}
 				session.sendMessage(new TextMessage("stop"))
 			}
+			map[(session.id)] -= message.payload
 		}
 	}
 }
