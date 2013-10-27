@@ -10,19 +10,21 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import android.app.DownloadManager;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
 public class ImageUploadService extends IntentService {
-    private final static String LOG_TAG = ImageUploadService.class.getSimpleName();
+    private final static String LOG_TAG                 = ImageUploadService.class.getSimpleName();
     
-    public final static String EXTRA_PAYLOAD           = "payload";
-    public static final String ACTION_UPLOAD_COMPLETED = "graffiti.upload_completed";
+    public final static String  EXTRA_PAYLOAD           = "payload";
+    public static final String  ACTION_UPLOAD_COMPLETED = "graffiti.upload_completed";
     
     public ImageUploadService(String name) {
         super(name);
+    }
+    public ImageUploadService() {
+        super(LOG_TAG);
     }
     
     @Override
@@ -30,7 +32,7 @@ public class ImageUploadService extends IntentService {
         String payload = intent.getStringExtra(EXTRA_PAYLOAD);
         HttpURLConnection urlConnection = null;
         try {
-            URL url = new URL("192.168.1.150");
+            URL url = new URL("http://192.168.1.150:8080/upload");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -39,21 +41,21 @@ public class ImageUploadService extends IntentService {
             printout.writeUTF(URLEncoder.encode(payload, "UTF-8"));
             printout.flush();
             printout.close();
-            int httpResult =urlConnection.getResponseCode();  
+            int httpResult = urlConnection.getResponseCode();
             if (httpResult == HttpURLConnection.HTTP_OK) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
                 String line = null;
-                StringBuffer sb= new StringBuffer();
+                StringBuffer sb = new StringBuffer();
                 
                 while ((line = br.readLine()) != null) {
                     sb.append(line + "\n");
                 }
                 br.close();
                 
-                Log.i(LOG_TAG,sb.toString());  
+                Log.i(LOG_TAG, sb.toString());
                 
             } else {
-                Log.i(LOG_TAG,urlConnection.getResponseMessage());
+                Log.i(LOG_TAG, urlConnection.getResponseMessage());
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();

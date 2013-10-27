@@ -61,7 +61,9 @@ public class DrawActivity extends RoboActivity {
             
             @Override
             public void onReceive(Context context, Intent intent) {
-                mSaveButton.setVisibility(View.VISIBLE);
+                if (intent.getAction().equals(ImageUploadService.ACTION_UPLOAD_COMPLETED)){
+                    mSaveButton.setVisibility(View.VISIBLE);
+                }
             }
             
         };
