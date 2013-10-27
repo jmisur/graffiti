@@ -44,7 +44,7 @@ class StorageService {
 	}
 
 	List<GraffitiData> find(String lat0, String long0, String lat1, String long1) {
-		repo.findByLocWithin( new Box( new Point(lat0 as double, long0 as double), new Point(lat1 as double,long1 as double)) )
+		repo.findByLocWithin( new Box( new Point(lat0 as double, long0 as double), new Point(lat1 as double,long1 as double)), new Sort(Direction.DESC, "timestamp") )
 	}
 
 	List<GraffitiData> popular() {
