@@ -1,10 +1,16 @@
 package org.graffiti.grafroid.drawing;
 
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.graffiti.grafroid.R;
 import org.graffiti.grafroid.sensor.SensorDataManager;
+import org.graffiti.grafroid.sensor.SensorDataManagerInterface;
 import org.graffiti.grafroid.sensor.SensorDataManager.DebugDataListener;
 import org.graffiti.grafroid.sensor.SensorPoint;
 
@@ -17,11 +23,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +48,8 @@ import com.jjoe64.graphview.LineGraphView;
  */
 public class DrawActivity extends RoboActivity {
     
+    public static final String GRAFITTI_PNG = "grafitti.png";
+
     private final static String        LOG_TAG = DrawActivity.class.getSimpleName();
     
     @InjectView(R.id.drawingImage)
@@ -46,6 +57,10 @@ public class DrawActivity extends RoboActivity {
     
     @InjectView(R.id.upload_button)
     private ImageView                  mSaveButton;
+    
+    @InjectView(R.id.spray_button)
+    private ImageView mSprayButton;
+
     
     @Inject
     private DrawingControlViewListener mDrawingListener;
@@ -65,11 +80,31 @@ public class DrawActivity extends RoboActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(ImageUploadService.ACTION_UPLOAD_COMPLETED)){
                     mSaveButton.setVisibility(View.VISIBLE);
+                    mDrawingListener.clearImage();
                 }
             }
             
         };
         registerReceiver(mBroadcastReceiver, new IntentFilter(ImageUploadService.ACTION_UPLOAD_COMPLETED));
+        
+        mSprayButton.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        mDrawingListener.startRecording();
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        mDrawingListener.stopRecording();
+                        break;
+                }
+            return true;
+            }
+        });
+        
+     
         
         mSaveButton.setOnClickListener(new OnClickListener() {
             
@@ -78,9 +113,22 @@ public class DrawActivity extends RoboActivity {
                 //start service to extract language file
                 Intent serviceIntent = new Intent(DrawActivity.this, ImageUploadService.class);
                 Bitmap bitmap = ((BitmapDrawable)mDrawingImage.getDrawable()).getBitmap();
-                serviceIntent.putExtra(ImageUploadService.EXTRA_PAYLOAD, bitmap);
-                DrawActivity.this.startService(serviceIntent);
-                mSaveButton.setVisibility(View.INVISIBLE);
+                FileOutputStream openFileInput;
+                try {
+                    openFileInput = openFileOutput(GRAFITTI_PNG,Context.MODE_PRIVATE);
+                    DataOutputStream printout = new DataOutputStream(openFileInput);
+                    bitmap.compress(CompressFormat.PNG, 75, printout);
+                    printout.flush();
+                    printout.close();
+                    openFileInput.close();                    
+                    DrawActivity.this.startService(serviceIntent);
+                    mSaveButton.setVisibility(View.INVISIBLE);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -91,38 +139,39 @@ public class DrawActivity extends RoboActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
     
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                mDrawingListener.stopRecording();
-                mRecording = false;
-                break;
-        }
-        
-        return true;
-        
-    };
-    
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (!mRecording) {
-                    mRecording = true;
-                    mDrawingListener.startRecording();
-                }
-                break;
-        }
-        
-        return true;
-    }
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//                mDrawingListener.stopRecording();
+//                mRecording = false;
+//                break;
+//        }
+//        
+//        return true;
+//        
+//    };
+//    
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//                if (!mRecording) {
+//                    mRecording = true;
+//                    mDrawingListener.startRecording();
+//                }
+//                break;
+//        }
+//        
+//        return true;
+//    }
     
     @ContextSingleton
     private static class DrawingControlViewListener implements DebugDataListener {
         @InjectView(R.id.drawingImage)
         private ImageView               mDrawingImage;
+        
         
         @Inject
         private DrawingEventHandler     mDrawingEventHandler;
@@ -151,11 +200,16 @@ public class DrawActivity extends RoboActivity {
             drawCurrentPath();
             mDrawingImage.invalidate();
         }
+        public void clearImage(){
+            mAccumulatedPoints.clear();
+            drawCurrentPath();
+            mDrawingImage.invalidate();
+        }
         
         private void drawCurrentPath() {
             final ImmutableList<ThreeAxisPoint> currentPath = mPath.getInterpolatedPoints();
             mAccumulatedPoints.addAll(currentPath);
-            mBitmapController.render(currentPath, mDrawingImage);
+            mBitmapController.render(mAccumulatedPoints, mDrawingImage);
         }
         
         @Override

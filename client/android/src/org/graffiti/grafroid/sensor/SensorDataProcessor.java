@@ -52,21 +52,21 @@ class SensorDataProcessor {
                     Log.i(LOG_TAG, "stopped " + i);
                     // motion stopped
                     mIsMoving[i] = false;
-                    switch (i) {
-                        case 0:
-                            findPeaks(mXPoints, i);
-                            mXPoints.clear();
-                            break;
-                        case 1:
-                            findPeaks(mYPoints, i);
-                            mYPoints.clear();
-                            break;
-                        case 2:
-                            findPeaks(mZPoints, i);
-                            mZPoints.clear();
-                            break;
-                    
-                    }
+                    //                    switch (i) {
+                    //                        case 0:
+                    //                            findPeaks(mXPoints, i);
+                    //                            mXPoints.clear();
+                    //                            break;
+                    //                        case 1:
+                    //                            findPeaks(mYPoints, i);
+                    //                            mYPoints.clear();
+                    //                            break;
+                    //                        case 2:
+                    //                            findPeaks(mZPoints, i);
+                    //                            mZPoints.clear();
+                    //                            break;
+                    //                    
+                    //                    }
                     
                 } else if (!mIsMoving[i]) {
                     Log.i(LOG_TAG, "started " + i);
@@ -102,35 +102,48 @@ class SensorDataProcessor {
                 }
             }
         }
+        
+        if (!mIsMoving[0] && !mIsMoving[1] && !mIsMoving[2]) {
+            findPeaks(mXPoints, 0);
+            mXPoints.clear();
+            findPeaks(mYPoints, 1);
+            mYPoints.clear();
+            findPeaks(mZPoints, 2);
+            mZPoints.clear();
+            
+        }
     }
     
     public void stop() {
+        //        mXPoints.clear();
+        //        mXWindow.reset();
+        //        mYPoints.clear();
+        //        mYWindow.reset();
+        //        mZPoints.clear();
+        //        mZWindow.reset();
         
         for (int i = 0; i < 3; i++) {
             
-            if (mIsMoving[i] != false) {
-                if (mIsMoving[i]) {
-                    Log.i(LOG_TAG, "stopped " + i);
-                    // motion stopped
-                    switch (i) {
-                        case 0:
-                            findPeaks(mXPoints, i);
-                            mXPoints.clear();
-                            mXWindow.reset();
-                            break;
-                        case 1:
-                            findPeaks(mYPoints, i);
-                            mYPoints.clear();
-                            mYWindow.reset();
-                            break;
-                        case 2:
-                            findPeaks(mZPoints, i);
-                            mZPoints.clear();
-                            mZWindow.reset();
-                            break;
-                    
-                    }
-                    
+            if (mIsMoving[i] = true) {
+                Log.i(LOG_TAG, "stopped " + i);
+                // motion stopped
+                switch (i) {
+                    case 0:
+                        findPeaks(mXPoints, i);
+                        mXPoints.clear();
+                        mXWindow.reset();
+                        break;
+                    case 1:
+                        findPeaks(mYPoints, i);
+                        mYPoints.clear();
+                        mYWindow.reset();
+                        break;
+                    case 2:
+                        findPeaks(mZPoints, i);
+                        mZPoints.clear();
+                        mZWindow.reset();
+                        break;
+                
                 }
             }
         }
@@ -189,7 +202,6 @@ class SensorDataProcessor {
                 Log.i(LOG_TAG, "sent " + log + " :  " + extrema.get(i));
                 
             }
-            long lastTimestamp = points.get(points.size()-1).mTimeStamp;
             switch (index) {
                 case 0:
                     mListener.onMotionStopX(lastTime);

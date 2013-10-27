@@ -7,6 +7,7 @@ import org.graffiti.grafroid.sensor.SensorPoint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.widget.ImageView;
@@ -27,25 +28,64 @@ public class DrawingBitmapController {
         drawingCanvas.drawPath(drawPath, outerPencil);
         drawingCanvas.drawPath(drawPath, pencil);
     }
+
     
     private void draw(final Bitmap bitmap, final ImmutableList<ThreeAxisPoint> pathPoints) {
         Preconditions.checkNotNull(bitmap);
-        
         final Path drawPath = new Path();
-        //FIXME temp stuff:
-        drawPath.moveTo(100, 100);
         
+        drawPath.moveTo(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+        double left = Double.MAX_VALUE;
+        double right = Double.MIN_VALUE;
+        double top = Double.MAX_VALUE;
+        double bottom = Double.MIN_VALUE;
+        
+        for (ThreeAxisPoint p : pathPoints) {
+            left = Math.min(p.getXPoint().mValue, left);
+            right = Math.max(p.getXPoint().mValue, right);
+            
+            top = Math.min(p.getYPoint().mValue, top);
+            bottom = Math.max(p.getYPoint().mValue, bottom);
+            
+        }
+        
+        double realWidth = right - left;
+        double realHeight = bottom - top;
+        
+        int dwidth = (int) realWidth;
+        int dheight = (int) realHeight;
+        int vwidth = bitmap.getWidth();
+        int vheight = bitmap.getHeight();
+        float scale, dx, dy;
+        
+        if (dwidth <= vwidth && dheight <= vheight) {
+            scale = 1.0f;
+        } else {
+            scale = Math.min((float) vwidth / (float) dwidth, (float) vheight / (float) dheight);
+        }
+        dx = (vwidth - dwidth * scale) * 0.5f;
+        dy = (vheight - dheight * scale) * 0.5f;
+        Matrix scaler = new Matrix();
+        scaler.setScale(scale, scale);
+        scaler.postTranslate(dx, dy);
+        
+        //scaler.preTranslate(translateX, translateY);
+        float[] mappedPoints = new float[2];
         for (final ThreeAxisPoint threeAxisPoint : pathPoints) {
-            drawPath.rLineTo((float) threeAxisPoint.getXPoint().mValue, (float) threeAxisPoint.getYPoint().mValue);
+            mappedPoints[0] = (float) threeAxisPoint.getXPoint().mValue;
+            mappedPoints[1] = (float) threeAxisPoint.getYPoint().mValue;
+            //scaler.mapPoints(mappedPoints);
+
+            drawPath.rLineTo(mappedPoints[0], mappedPoints[1]);
         }
         
         draw(bitmap, drawPath);
     }
     
-    public void render(final ImmutableList<ThreeAxisPoint> pathPoints, final ImageView view) {
+    public void render(final List<ThreeAxisPoint> pathPoints, final ImageView view) {
         Preconditions.checkNotNull(view);
         
-        final Bitmap drawingBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        final Bitmap drawingBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         final ImmutableList<ThreeAxisPoint> adjustedPoints = adjustForDeviceOrientation(pathPoints);
         draw(drawingBitmap, adjustedPoints);
         view.setImageBitmap(drawingBitmap);
@@ -63,25 +103,27 @@ public class DrawingBitmapController {
     }
     
     private Paint getOuterPencil(final Paint inner) {
-        return new Paint(){{
-            setAntiAlias(true);
-            setColor(inner.getColor());
-            setAlpha(128);
-            setStrokeWidth((float) (inner.getStrokeWidth()*3));
-            setStyle(Paint.Style.STROKE);
-            setStrokeJoin(Paint.Join.ROUND);
-
-        }};
+        return new Paint() {
+            {
+                setAntiAlias(true);
+                setColor(inner.getColor());
+                setAlpha(128);
+                setStrokeWidth((float) (inner.getStrokeWidth() * 1.5));
+                setStyle(Paint.Style.STROKE);
+                setStrokeJoin(Paint.Join.ROUND);
+                
+            }
+        };
     }
     
     private Paint getPencil() {
         final Paint pencil = new Paint();
         
         pencil.setAntiAlias(true);
-        pencil.setColor(Color.RED);
+        pencil.setColor(Color.argb(255, 248, 119, 4));
         pencil.setStyle(Paint.Style.STROKE);
         pencil.setStrokeJoin(Paint.Join.ROUND);
-        pencil.setStrokeWidth(5f);
+        pencil.setStrokeWidth(8f);
         
         return pencil;
     }
